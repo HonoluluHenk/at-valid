@@ -1,18 +1,17 @@
+import {DecoratorValidator} from "../validator/DecoratorValidator";
 import {IsNotEmpty} from "./IsNotEmpty";
-import {ValidationContext} from "../validator/ValidationContext";
-import {Validator} from "../validator/Validator";
 
 // @Foobar('class')
 class Foo {
 	@IsNotEmpty()
-	bar?: string;
+	public bar?: string;
 
 	constructor(bar?: string) {
 		this.bar = bar;
 	}
 }
 
-fdescribe('IsNotEmpty', () => {
+describe('IsNotEmpty', () => {
 
 	describe('fixture setup', () => {
 		it('should setup the fixture correctly', () => {
@@ -28,7 +27,7 @@ fdescribe('IsNotEmpty', () => {
 	describe('asdf', () => {
 		it('should do stuff', () => {
 
-			expect(new Validator().validate(new Foo()).success)
+			expect(new DecoratorValidator().validate(new Foo()).success)
 					.toBeFalsy();
 
 		});

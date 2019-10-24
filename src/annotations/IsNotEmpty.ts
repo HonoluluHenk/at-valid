@@ -1,16 +1,16 @@
-import {CustomContext, ValidationContext} from "../validator/ValidationContext";
 import * as validate from 'validate.js';
+import {CustomContext, ValidationContext} from "../validator/ValidationContext";
 
 export const IS_NOT_EMPTY = "IsNotEmpty";
 
 export function IsNotEmpty(context?: CustomContext): any {
-	return function (target: Object, propertyKey: string | symbol) {
-		ValidationContext.instance.registerPropertyValidation({
+	return (target: object, propertyKey: string | symbol) => {
+		ValidationContext.instance.registerPropertyValidator({
 			name: IS_NOT_EMPTY,
-			target: target,
+			target,
 			propertyKey: propertyKey as string, // FIXME: symbol?
-			validationFn: value => !validate.isEmpty(value),
-			context: context
+			validatorFn: value => !validate.isEmpty(value),
+			context
 		});
 	};
 }

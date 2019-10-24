@@ -5,7 +5,9 @@
 	"main": "index.js",
 	"scripts": {
 		"format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
-		"lint": "tslint -p tsconfig.json",
+		"lint": "eslint 'src/**/*.ts'",
+		"lint:tsc": "tslint -p tsconfig.app.json",
+		"lint:tsc:spec": "tslint -p tsconfig.spec.json",
 		"build": "tsc",
 		"test:watch": "nodemon --watch src --ext ts --exec 'jasmine-ts --config=jasmine.json'",
 		"test": "jasmine-ts --config=jasmine.json"
@@ -30,8 +32,11 @@
 		"jasmine-spec-reporter": "^4.2.1",
 		"jasmine-ts": "^0.3.0",
 		"nodemon": "^1.19.4",
+		"prettier": "^1.18.2",
 		"reflect-metadata": "^0.1.13",
 		"ts-node": "^8.4.1",
+		"tslint": "^5.20.0",
+		"tslint-config-prettier": "^1.18.0",
 		"typescript": "^3.6.4"
 	},
 	"dependencies": {

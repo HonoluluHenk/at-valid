@@ -1,3 +1,43 @@
 {
-	"extends": ["tslint:recommended", "tslint-config-prettier"]
+	"extends": [
+		"tslint:recommended",
+		"tslint-config-prettier"
+	],
+	"rules": {
+		"object-literal-sort-keys": false,
+		"variable-name": {
+			"options": [
+				"check-format",
+				"ban-keywords",
+				"require-const-for-all-caps",
+				"allow-leading-underscore"
+			]
+		},
+		"interface-name": [
+			true,
+			"never-prefix"
+		],
+		"comment-format": [
+			false
+		],
+		"whitespace": [
+			true,
+			"check-branch",
+			"check-decl",
+			"check-operator",
+			"check-separator",
+			"check-rest-spread",
+			"check-type",
+			"check-typecast",
+			"check-type-operator",
+			"check-preblock"
+		],
+		"newline-before-return": [
+			true
+		],
+		"newline-per-chained-call": [
+			true
+		],
+		"max-classes-per-file": false
+	}
 }

@@ -1,8 +1,8 @@
-import {Validator} from "../validator/Validator";
+import {DecoratorValidator} from "../validator/DecoratorValidator";
 
 describe('Validatro should instantiate', () => {
 	it('should instantiate', () => {
-		expect(new Validator())
+		expect(new DecoratorValidator())
 				.toBeTruthy();
 	});
 });
