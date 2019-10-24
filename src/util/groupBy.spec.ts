@@ -1,4 +1,4 @@
-import {groupBy} from './gropuBy';
+import {groupBy} from './groupBy';
 
 fdescribe('groupBy', () => {
 	class Foo {
