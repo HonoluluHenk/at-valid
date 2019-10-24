@@ -1,0 +1,40 @@
+{
+	"name": "annotated-validator",
+	"version": "1.0.0",
+	"description": "Validate objects by using annotations",
+	"main": "index.js",
+	"scripts": {
+		"format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+		"lint": "tslint -p tsconfig.json",
+		"build": "tsc",
+		"test:watch": "nodemon --watch src --ext ts --exec 'jasmine-ts --config=jasmine.json'",
+		"test": "jasmine-ts --config=jasmine.json"
+	},
+	"files": [
+		"lib/**/*"
+	],
+	"keywords": [
+		"object",
+		"class",
+		"validation",
+		"validate",
+		"annotations",
+		"bean",
+		"beanvalidation"
+	],
+	"author": "Christoph Linder",
+	"license": "SEE LICENSE IN FIXME",
+	"devDependencies": {
+		"@types/jasmine": "^3.4.4",
+		"jasmine": "^3.5.0",
+		"jasmine-spec-reporter": "^4.2.1",
+		"jasmine-ts": "^0.3.0",
+		"nodemon": "^1.19.4",
+		"reflect-metadata": "^0.1.13",
+		"ts-node": "^8.4.1",
+		"typescript": "^3.6.4"
+	},
+	"dependencies": {
+		"validate.js": "^0.13.1"
+	}
+}
