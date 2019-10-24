@@ -4,22 +4,29 @@
 		"tslint-config-prettier"
 	],
 	"rules": {
-		"object-literal-sort-keys": false,
-		"variable-name": {
-			"options": [
-				"check-format",
-				"ban-keywords",
-				"require-const-for-all-caps",
-				"allow-leading-underscore"
-			]
-		},
+		"comment-format": [
+			false
+		],
 		"interface-name": [
 			true,
 			"never-prefix"
 		],
-		"comment-format": [
-			false
+		"max-classes-per-file": false,
+		"newline-before-return": [
+			true
 		],
+		"newline-per-chained-call": [
+			true
+		],
+		"object-literal-sort-keys": false,
+		"variable-name": {
+			"options": [
+				"allow-leading-underscore",
+				"ban-keywords",
+				"check-format",
+				"require-const-for-all-caps"
+			]
+		},
 		"whitespace": [
 			true,
 			"check-branch",
@@ -31,13 +38,6 @@
 			"check-typecast",
 			"check-type-operator",
 			"check-preblock"
-		],
-		"newline-before-return": [
-			true
-		],
-		"newline-per-chained-call": [
-			true
-		],
-		"max-classes-per-file": false
+		]
 	}
 }
