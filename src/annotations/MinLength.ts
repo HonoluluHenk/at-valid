@@ -1,6 +1,6 @@
-import {CustomContext, ValidationContext} from "../validator/ValidationContext";
 import {isEmpty} from "../util/isEmpty";
 import {requireType} from "../util/requireType";
+import {CustomContext, ValidationContext} from "../validator/ValidationContext";
 
 export const MIN_LENGTH = "MinLength";
 
@@ -21,4 +21,3 @@ export function MinLength(min: number, context?: CustomContext): any {
 		});
 	};
 }
-

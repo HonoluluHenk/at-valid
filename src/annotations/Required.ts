@@ -1,5 +1,5 @@
-import {CustomContext, ValidationContext} from "../validator/ValidationContext";
 import {isEmpty} from "../util/isEmpty";
+import {CustomContext, ValidationContext} from "../validator/ValidationContext";
 
 export const REQIRED = "Required";
 
