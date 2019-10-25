@@ -1,7 +1,7 @@
 import {DecoratorValidator} from './DecoratorValidator';
 import {CustomContext, ValidationContext} from './ValidationContext';
 
-fdescribe('DecoratorValidator', () => {
+describe('DecoratorValidator', () => {
 	describe('A validator that is modifying the context', () => {
 		let invocation = 0;
 

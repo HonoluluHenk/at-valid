@@ -1,9 +1,9 @@
 import {DecoratorValidator} from "../validator/DecoratorValidator";
-import {MinLength} from "./MinLength";
+import {MaxLength} from './MaxLength';
 
-describe('MinLength', () => {
+describe('MaxLength', () => {
 	class Foo {
-		@MinLength(5)
+		@MaxLength(5)
 		public bar?: string | null;
 
 		constructor(bar: string | null | undefined) {
@@ -24,8 +24,8 @@ describe('MinLength', () => {
 		const params = [
 			{text: undefined},
 			{text: null},
-			{text: "12345"},
-			{text: "Hello World"}
+			{text: ""},
+			{text: "12345"}
 		];
 
 		params.forEach(param => {
@@ -39,8 +39,8 @@ describe('MinLength', () => {
 
 	describe('invalid input', () => {
 		const params = [
-			{text: ""},
-			{text: "1234"},
+			{text: "123456"},
+			{text: "Hello World"},
 		];
 
 		params.forEach(param => {

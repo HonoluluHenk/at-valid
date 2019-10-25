@@ -4,43 +4,60 @@ import {Required} from "./Required";
 // @Foobar('class')
 class Foo {
 	@Required()
-	public bar?: string;
+	public bar?: any | null | undefined;
 
-	constructor(bar?: string) {
+	constructor(bar: any | null | undefined) {
 		this.bar = bar;
 	}
 }
 
 describe('Required', () => {
 
-	describe('fixture setup', () => {
-		it('should setup the fixture correctly', () => {
-			expect(new Foo().bar)
-					.toEqual(undefined);
+	describe('missing values', () => {
+		const params = [
+			{input: undefined},
+			{input: null}
+		];
 
-			expect(new Foo("baz").bar)
-					.toEqual("baz");
-		});
+		params.forEach(param => {
+			it(`(${param.input}) should return error`, () => {
+				const fixture = new Foo(param.input);
 
-	});
+				const actual = new DecoratorValidator()
+						.validate(fixture)
+						.isSuccess;
 
-	describe('missing value', () => {
-		const fixture = new Foo();
+				expect(actual)
+						.toBe(false);
 
-		it('should return error', () => {
-			expect(new DecoratorValidator().validate(fixture).isSuccess)
-					.toBe(false);
-
+			});
 		});
 	});
 
 	describe('a given value', () => {
-		const fixture = new Foo('bar');
+		const params = [
+			{input: ""},
+			{input: "Hello World"},
+			{input: 0},
+			{input: -0},
+			{input: 1},
+			{input: NaN},
+			{input: []},
+			{input: {}},
+		];
 
-		it('should return ok', () => {
-			expect(new DecoratorValidator().validate(fixture).isSuccess)
-					.toBe(true);
+		params.forEach(param => {
+			it(`(${param.input}) should succeed`, () => {
+				const fixture = new Foo(param.input);
 
+				const actual = new DecoratorValidator()
+						.validate(fixture)
+						.isSuccess;
+
+				expect(actual)
+						.toBe(true);
+
+			});
 		});
 	});
 
