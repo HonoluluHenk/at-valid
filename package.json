@@ -5,13 +5,18 @@
 	"main": "index.js",
 	"scripts": {
 		"format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
-		"lint": "eslint 'src/**/*.ts'",
+		"lint": "npm run lint:tsc && npm run lint:tsc:spec",
 		"lint:tsc": "tslint -p tsconfig.app.json",
 		"lint:tsc:spec": "tslint -p tsconfig.spec.json",
-		"build": "tsc",
+		"build": "check-engine package.json && tsc -p tsconfig.app.json",
 		"test:watch": "nodemon --watch src --ext ts --exec 'jasmine-ts --config=jasmine.json'",
 		"test": "jasmine-ts --config=jasmine.json"
 	},
+	"engines": {
+		"node": ">=12.13.0",
+		"npm": ">=6.12.0"
+	},
+	"engineStrict": true,
 	"files": [
 		"lib/**/*"
 	],
@@ -25,9 +30,10 @@
 		"beanvalidation"
 	],
 	"author": "Christoph Linder",
-	"license": "SEE LICENSE IN FIXME",
+	"license": "MIT",
 	"devDependencies": {
 		"@types/jasmine": "^3.4.4",
+		"check-engine": "^1.8.1",
 		"jasmine": "^3.5.0",
 		"jasmine-spec-reporter": "^4.2.1",
 		"jasmine-ts": "^0.3.0",

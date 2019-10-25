@@ -1,15 +1,7 @@
-/* decorator functions
-declare type ClassDecorator = <TFunction extends Function>(target: TFunction) => TFunction | void;
-declare type PropertyDecorator = (target: Object, propertyKey: string | symbol) => void;
-declare type MethodDecorator = <T>(target: Object, propertyKey: string | symbol, descriptor: TypedPropertyDescriptor<T>) => TypedPropertyDescriptor<T> | void;
-declare type ParameterDecorator = (target: Object, propertyKey: string | symbol, parameterIndex: number) => void;
- */
-
 /**
  * The default validation group.
  */
 export const DEFAULT_GROUP = "DEFAULT";
-export const ALL_GROUPS = [];
 
 /**
  * Allows for passing data per validator-usage.
@@ -23,30 +15,37 @@ export interface CustomContext {
 //FIXME: do not forget to add context from register*() function to the ultimate ValidationError subclass
 
 export type ValidatorFn<V, T extends object = object> =
-		(value: V | undefined | null, target: T, opts: CustomContext)
+		(value: V | undefined | null, ctx: ValidatorFnContext, targetInstance: T)
 				=> boolean;
 
 export type AsyncValidatorFn<V, T = object> =
-		(value: V | undefined | null, target: T, opts: CustomContext)
+		(value: V | undefined | null, ctx: ValidatorFnContext, targetInstance: T)
 				=> Promise<boolean>;
 
-export interface RuntimePropertyValidatorMap {
-	[key: string]: RuntimePropertyValidator[]
+export interface RuntimeValidatorConfigMap {
+	[key: string]: RuntimeValidatorConfig[]
+}
+
+export class ValidatorFnContext {
+	constructor(
+			public readonly args: object,
+			public readonly customContext: CustomContext
+	) {
+	}
 }
 
 /**
  * a normalized and validated view of {@link PropertyValidator}
  */
-export class RuntimePropertyValidator {
+export class RuntimeValidatorConfig {
 	constructor(
 			public readonly name: string,
-			public readonly propertyKey: string/* | symbol*/,
+			public readonly propertyKey: string,
 			public readonly target: object,
 			public readonly validatorFn: ValidatorFn<any>/*|AsyncValidatorFn<V>*/,
-			public readonly validatorFnArgs: any[],
+			public readonly validatorFnContext: ValidatorFnContext,
 			public readonly messageOverride: string,
 			public readonly groups: string[],
-			public readonly customContext: CustomContext
 	) {
 	}
 }
@@ -54,13 +53,12 @@ export class RuntimePropertyValidator {
 export interface PropertyValidator<V> {
 	/**
 	 * The name of this validator.
-	 * Most commonly this is the name of the annotation (e.g.: IsNotEmpty, MinLength, ...).
+	 * Most commonly this is the name of the annotation (e.g.: Required, MinLength, ...).
 	 */
 	name: string;
 	/**
 	 * Which property is being validated.
 	 */
-	// FIXME: | symbol
 	propertyKey: string,
 	/**
 	 * The class where the property is located.
@@ -70,12 +68,11 @@ export interface PropertyValidator<V> {
 	 * The actual function that does the validation.
 	 */
 	//FIXME: async
-	validatorFn: ValidatorFn<V>/*|AsyncValidatorFn<V>*/
-	;
+	validatorFn: ValidatorFn<V>; /*|AsyncValidatorFn<V>*/
 	/**
 	 * If your validator function needs arguments (e.g.: the min-length of a string), provide them here.
 	 */
-	args?: any[];
+	messageArgs?: object;
 	/**
 	 * Allow overriding the default message.
 	 */
@@ -106,23 +103,26 @@ export class ValidationContext {
 	 *     <li>"constructor" (for class validators)</li>
 	 * </ul>
 	 */
-	private readonly validatorsPerClass: Map<object, RuntimePropertyValidatorMap> = new Map();
+	private readonly validatorsPerClass: Map<object, RuntimeValidatorConfigMap> = new Map();
 
 	public registerPropertyValidator<V>(
 			opts: PropertyValidator<V>
 	): number {
 		// console.log('registerPropertyValidatio called: ', opts);
 
-		const validator: RuntimePropertyValidator = {
+		const validator: RuntimeValidatorConfig = {
 			name: required(opts.name, "name/class"),
 			propertyKey: required(opts.propertyKey, "propertyKey"),
 			target: required(opts.target, "target"),
 			validatorFn: required(opts.validatorFn, "validatorFn"),
-			validatorFnArgs: opts.args || [],
+			validatorFnContext: new ValidatorFnContext(opts.messageArgs || {}, opts.context || {}),
 			messageOverride: opts.messageOverride || "",
 			groups: (typeof opts.groups === 'string' ? [opts.groups] : opts.groups) || [DEFAULT_GROUP],
-			customContext: opts.context || {} as CustomContext
 		};
+
+		if (typeof validator.propertyKey === 'symbol') {
+			throw Error(`Symbols not supported (target: ${validator.target}@${validator.propertyKey})`);
+		}
 
 		// console.debug('registering validator: ', validator);
 		this.putValidator(validator);
@@ -130,18 +130,18 @@ export class ValidationContext {
 		return 0;
 	}
 
-	public getValidatorsForClass(object: object): RuntimePropertyValidatorMap {
+	public getValidatorsForClass(object: object): RuntimeValidatorConfigMap {
 		return this.validatorsPerClass.get(object.constructor) || {};
 	}
 
-	private putValidator(validator: RuntimePropertyValidator): void {
-		const forClass = this.validatorsPerClass.get(validator.target.constructor) || {};
-		const forProp = forClass[validator.propertyKey] || [];
+	private putValidator(validator: RuntimeValidatorConfig): void {
+		const allForClass = this.validatorsPerClass.get(validator.target.constructor) || {};
+		const allForProp = allForClass[validator.propertyKey] || [];
 
-		forProp.push(validator);
-		forClass[validator.propertyKey] = forProp;
+		allForProp.push(validator);
+		allForClass[validator.propertyKey] = allForProp;
 
-		this.validatorsPerClass.set(validator.target.constructor, forClass);
+		this.validatorsPerClass.set(validator.target.constructor, allForClass);
 	}
 }
 

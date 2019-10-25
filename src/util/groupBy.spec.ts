@@ -1,6 +1,6 @@
 import {groupBy} from './groupBy';
 
-fdescribe('groupBy', () => {
+describe('groupBy', () => {
 	class Foo {
 		constructor(
 				public readonly key: string | null | undefined,
