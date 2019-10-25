@@ -26,12 +26,9 @@ export interface RuntimeValidatorConfigMap {
 	[key: string]: RuntimeValidatorConfig[]
 }
 
-export class ValidatorFnContext {
-	constructor(
-			public readonly args: object,
-			public readonly customContext: CustomContext
-	) {
-	}
+export interface ValidatorFnContext {
+	readonly args: object,
+	readonly customContext: CustomContext
 }
 
 /**
@@ -47,6 +44,10 @@ export class RuntimeValidatorConfig {
 			public readonly messageOverride: string,
 			public readonly groups: string[],
 	) {
+	}
+
+	public cloneValidatorCnContext(): ValidatorFnContext {
+		return JSON.parse(JSON.stringify(this.validatorFnContext));
 	}
 }
 
@@ -110,15 +111,15 @@ export class ValidationContext {
 	): number {
 		// console.log('registerPropertyValidatio called: ', opts);
 
-		const validator: RuntimeValidatorConfig = {
-			name: required(opts.name, "name/class"),
-			propertyKey: required(opts.propertyKey, "propertyKey"),
-			target: required(opts.target, "target"),
-			validatorFn: required(opts.validatorFn, "validatorFn"),
-			validatorFnContext: new ValidatorFnContext(opts.messageArgs || {}, opts.context || {}),
-			messageOverride: opts.messageOverride || "",
-			groups: (typeof opts.groups === 'string' ? [opts.groups] : opts.groups) || [DEFAULT_GROUP],
-		};
+		const validator = new RuntimeValidatorConfig(
+			required(opts.name, "name/class"),
+			required(opts.propertyKey, "propertyKey"),
+			required(opts.target, "target"),
+			required(opts.validatorFn, "validatorFn"),
+			{args: (opts.messageArgs || {}), customContext: opts.context || {}},
+			opts.messageOverride || "",
+			(typeof opts.groups === 'string' ? [opts.groups] : opts.groups) || [DEFAULT_GROUP],
+		);
 
 		if (typeof validator.propertyKey === 'symbol') {
 			throw Error(`Symbols not supported (target: ${validator.target}@${validator.propertyKey})`);

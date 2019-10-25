@@ -1,7 +1,7 @@
 //FIXME: remove this tslint:disable
 /* tslint:disable:no-console */
 import {DEFAULT_GROUP, RuntimeValidatorConfig, ValidationContext} from "./ValidationContext";
-import {ValidationError, ValidationResult} from "./ValidationResult";
+import {ValidationResult} from "./ValidationResult";
 
 export class DecoratorValidator<T extends object> {
 
@@ -15,7 +15,6 @@ export class DecoratorValidator<T extends object> {
 	 * @param targetInstance the object instance to execute the validations on.
 	 * @param groups
 	 */
-	//FIXME: do not forget to clone the CustomContext before passing it to the validation function!
 	public validate(targetInstance: T, groups: string[] = [DEFAULT_GROUP]): ValidationResult {
 		const allValidators = ValidationContext.instance.getValidatorsForClass(targetInstance);
 		// console.debug('allValidators: ', allValidators);
@@ -36,8 +35,6 @@ export class DecoratorValidator<T extends object> {
 				if (result.error) {
 					return result;
 				}
-
-				//FIXME: hier gehts weiter
 			}
 
 			//TODO: implement class validators
@@ -61,11 +58,12 @@ export class DecoratorValidator<T extends object> {
 			//FIXME: async
 			// console.log('type', typeof validator.validatorFn);
 			const propValue: any = (targetInstance as any)[property];
-			const ok = validator.validatorFn(propValue as any, validator.validatorFnContext, targetInstance);
+			const clonedFnContext = validator.cloneValidatorCnContext();
+			const ok = validator.validatorFn(propValue, clonedFnContext, targetInstance);
 			// console.debug('func result:', ok);
 
 			if (!ok) {
-				return new ValidationResult(new ValidationError());
+				return new ValidationResult({validatorFnContext: clonedFnContext});
 			}
 		}
 

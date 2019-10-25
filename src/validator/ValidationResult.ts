@@ -1,19 +1,19 @@
-export class ValidationError {
-	public readonly foobar: string = "ignore";
-}
+import {ValidatorFnContext} from './ValidationContext';
 
 export class ValidationResult {
 	constructor(
-			public readonly validationError?: ValidationError
+			public readonly error? : {
+				readonly validatorFnContext?: ValidatorFnContext,
+			}
 	) {
 	}
 
-	public get success(): boolean {
-		return !this.validationError;
+	public get isSuccess(): boolean {
+		return !this.error;
 	}
 
-	public get error(): boolean {
-		return !!this.validationError;
+	public get isError(): boolean {
+		return !!this.error;
 	}
 
 }

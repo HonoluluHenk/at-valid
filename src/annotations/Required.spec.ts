@@ -28,7 +28,7 @@ describe('Required', () => {
 		const fixture = new Foo();
 
 		it('should return error', () => {
-			expect(new DecoratorValidator().validate(fixture).success)
+			expect(new DecoratorValidator().validate(fixture).isSuccess)
 					.toBe(false);
 
 		});
@@ -38,7 +38,7 @@ describe('Required', () => {
 		const fixture = new Foo('bar');
 
 		it('should return ok', () => {
-			expect(new DecoratorValidator().validate(fixture).success)
+			expect(new DecoratorValidator().validate(fixture).isSuccess)
 					.toBe(true);
 
 		});

@@ -17,7 +17,7 @@ describe('MinLength', () => {
 		const fixture = new Foo();
 
 		it('should be ok', () => {
-			expect(new DecoratorValidator().validate(fixture).success)
+			expect(new DecoratorValidator().validate(fixture).isSuccess)
 					.toBe(true);
 		});
 	});
@@ -35,7 +35,7 @@ describe('MinLength', () => {
 		const fixture = new Foo("Hello World");
 
 		it('should be ok', () => {
-			expect(new DecoratorValidator().validate(fixture).success)
+			expect(new DecoratorValidator().validate(fixture).isSuccess)
 					.toBe(true);
 		})
 	});
@@ -44,7 +44,7 @@ describe('MinLength', () => {
 		const fixture = new Foo("bleh");
 
 		it('should fail', () => {
-			expect(new DecoratorValidator().validate(fixture).success)
+			expect(new DecoratorValidator().validate(fixture).isSuccess)
 					.toBe(false);
 		})
 	});
