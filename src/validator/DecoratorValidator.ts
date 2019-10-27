@@ -1,4 +1,3 @@
-//FIXME: remove this tslint:disable
 import {DEFAULT_GROUP, RuntimeValidatorConfig, ValidationContext} from "./ValidationContext";
 import {PropertyErrors, ValidationError, ValidationResult} from "./ValidationResult";
 

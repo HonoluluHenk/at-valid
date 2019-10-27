@@ -12,8 +12,6 @@ export interface CustomContext {
 	[key: string]: any
 }
 
-//FIXME: do not forget to add customContext from register*() function to the ultimate ValidationError subclass
-
 export type ValidatorFn<V, T extends object = object> =
 		(value: V | undefined | null, ctx: ValidatorFnContext, targetInstance: T)
 				=> boolean;
