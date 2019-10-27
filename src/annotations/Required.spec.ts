@@ -19,10 +19,10 @@ describe('Required', () => {
 		];
 
 		params.forEach(param => {
-			it(`(${param.input}) should return error`, () => {
+			it(`(${param.input}) should return error`, async () => {
 				const fixture = new Foo(param.input);
 
-				const actual = new DecoratorValidator()
+				const actual = await new DecoratorValidator()
 						.validate(fixture);
 
 				expect(actual.isSuccess)
@@ -30,8 +30,8 @@ describe('Required', () => {
 
 			});
 
-			it(`should have the desired error message (${param.input})`, () => {
-				const actual = new DecoratorValidator().validate(new Foo(param.input));
+			it(`should have the desired error message (${param.input})`, async () => {
+				const actual = await new DecoratorValidator().validate(new Foo(param.input));
 
 				expect(actual.propertyErrors)
 						.toEqual({
@@ -62,14 +62,13 @@ describe('Required', () => {
 		];
 
 		params.forEach(param => {
-			it(`(${param.input}) should succeed`, () => {
+			it(`(${param.input}) should succeed`, async () => {
 				const fixture = new Foo(param.input);
 
-				const actual = new DecoratorValidator()
-						.validate(fixture)
-						.isSuccess;
+				const actual = await new DecoratorValidator()
+						.validate(fixture);
 
-				expect(actual)
+				expect(actual.isSuccess)
 						.toBe(true);
 
 			});

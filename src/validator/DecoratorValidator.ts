@@ -3,6 +3,10 @@ import {PropertyErrors, ValidationError, ValidationResult} from "./ValidationRes
 
 const PATH_SEPARATOR = '.';
 
+export interface ValidateParams {
+	groups?: string[];
+}
+
 export class DecoratorValidator<T extends object> {
 
 	/**
@@ -13,16 +17,20 @@ export class DecoratorValidator<T extends object> {
 	 * for current group: if not property validation occured: execute each class-validator
 	 *
 	 * @param targetInstance the object instance to execute the validations on.
-	 * @param groups
+	 * @param params Configure validation behavior
 	 */
-	public validate(targetInstance: T, groups: string[] = [DEFAULT_GROUP]): ValidationResult {
+	public validate(targetInstance: T, params?: ValidateParams): Promise<ValidationResult> {
+		const parsedParams: Required<ValidateParams> = {
+			groups: (params || {}).groups || [DEFAULT_GROUP]
+		};
+
 		const validatorsByProperty = ValidationContext.instance.getValidatorsForClass(targetInstance);
 		// console.debug('validatorsByProperty: ', validatorsByProperty);
 
 		const propertyErrors: PropertyErrors = {};
 		const executed: RuntimeValidatorConfig[] = [];
 
-		for (const group of groups) {
+		for (const group of parsedParams.groups) {
 			for (const propertyKey in validatorsByProperty) {
 				if (!validatorsByProperty.hasOwnProperty(propertyKey)) {
 					continue;
@@ -50,7 +58,7 @@ export class DecoratorValidator<T extends object> {
 		}
 
 		// console.debug('ok');
-		return new ValidationResult(propertyErrors, undefined);
+		return Promise.resolve(new ValidationResult(propertyErrors, undefined));
 	}
 
 	private executePropertyValidators(

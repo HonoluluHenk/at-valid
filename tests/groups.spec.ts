@@ -51,8 +51,8 @@ describe('groups and ordering', () => {
 		];
 
 		params.forEach(param => {
-			it(`should execute only matching groups in top-down order (groups: ${param.groups})`, () => {
-				new DecoratorValidator().validate(new Foo(), param.groups);
+			it(`should execute only matching groups in top-down order (groups: ${param.groups})`, async () => {
+				await new DecoratorValidator().validate(new Foo(), {groups: param.groups});
 
 				expect(executions.map(e => e.type))
 						.toEqual(param.expected);
@@ -113,8 +113,8 @@ describe('groups and ordering', () => {
 					public readonly foo = 'ignored';
 				}
 
-				it(`should execute only expected validators (${param.One}/${param.Two}/${param.OneAndTwo}/${param.TwoAndOne})`, () => {
-					new DecoratorValidator().validate(new Foo(), ["One", "Two"]);
+				it(`should execute only expected validators (${param.One}/${param.Two}/${param.OneAndTwo}/${param.TwoAndOne})`, async () => {
+					await new DecoratorValidator().validate(new Foo(), {groups: ["One", "Two"]});
 
 					// console.debug('executions: ', executions);
 

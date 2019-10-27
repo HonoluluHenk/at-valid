@@ -14,8 +14,10 @@ describe('MaxLength', () => {
 	describe('wrong type', () => {
 		const fixture = new Foo({} as string);
 
-		it('should never validate', () => {
-			expect(new DecoratorValidator().validate(fixture).isSuccess)
+		it('should never validate', async () => {
+			const actual = await new DecoratorValidator().validate(fixture);
+
+			expect(actual.isSuccess)
 					.toEqual(false);
 		});
 	});
@@ -29,8 +31,10 @@ describe('MaxLength', () => {
 		];
 
 		params.forEach(param => {
-			it(`should succeed (${param.text})`, () => {
-				expect(new DecoratorValidator().validate(new Foo(param.text)).isSuccess)
+			it(`should succeed (${param.text})`, async () => {
+				const actual = await new DecoratorValidator().validate(new Foo(param.text));
+
+				expect(actual.isSuccess)
 						.toBe(true);
 			})
 		});
@@ -45,15 +49,15 @@ describe('MaxLength', () => {
 
 		params.forEach(param => {
 
-			it(`should fail (${param.text})`, () => {
-				const actual = new DecoratorValidator().validate(new Foo(param.text));
+			it(`should fail (${param.text})`, async () => {
+				const actual = await new DecoratorValidator().validate(new Foo(param.text));
 
 				expect(actual.isSuccess)
 						.toEqual(false);
 			});
 
-			it(`should have the desired error message (${param.text})`, () => {
-				const actual = new DecoratorValidator().validate(new Foo(param.text));
+			it(`should have the desired error message (${param.text})`, async () => {
+				const actual = await new DecoratorValidator().validate(new Foo(param.text));
 
 				expect(actual.propertyErrors)
 						.toEqual({

@@ -37,7 +37,7 @@ export class RuntimeValidatorConfig {
 			public readonly name: string,
 			public readonly propertyKey: string,
 			public readonly target: object,
-			public readonly validatorFn: ValidatorFn<any>/*|AsyncValidatorFn<V>*/,
+			public readonly validatorFn: ValidatorFn<any> | AsyncValidatorFn<any>,
 			public readonly validatorFnContext: ValidatorFnContext,
 			public readonly groups: string[],
 	) {
@@ -66,7 +66,7 @@ export interface PropertyValidator<V> {
 	 * The actual function that does the validation.
 	 */
 	//FIXME: async
-	validatorFn: ValidatorFn<V>; /*|AsyncValidatorFn<V>*/
+	validatorFn: ValidatorFn<V> | AsyncValidatorFn<V>
 	//FIXME: document
 	opts: Opts | undefined
 	/**
