@@ -20,29 +20,32 @@ export class DecoratorValidator<T extends object> {
 		// console.debug('validatorsByProperty: ', validatorsByProperty);
 
 		const propertyErrors: PropertyErrors = {};
+		const executed: RuntimeValidatorConfig[] = [];
 
 		for (const group of groups) {
-			// tslint:disable-next-line:forin
 			for (const propertyKey in validatorsByProperty) {
 				if (!validatorsByProperty.hasOwnProperty(propertyKey)) {
 					continue;
 				}
 
 				// console.debug("!!!!!! validation of prop: ", propertyKey);
-				const validators: RuntimeValidatorConfig[] = validatorsByProperty[propertyKey];
-
+				const validators: RuntimeValidatorConfig[] = validatorsByProperty[propertyKey]
+						.filter(validator => validatorInGroup(validator, group))
+						.filter(v => executed.indexOf(v) < 0);
 				// console.debug("found validators for propertyKey: ", propertyKey, validators);
-				if (!validators) {
-					continue;
-				}
 
-				const error = this.validatePropertyInGroup("", propertyKey, group, targetInstance, validators);
+				const error = this.executePropertyValidators("", propertyKey, targetInstance, validators);
+				executed.push(...validators);
+
 				// console.debug('result: ', result);
 				if (error) {
 					propertyErrors[propertyKey] = error;
 				}
 			}
 
+			if (Object.keys(propertyErrors).length !== 0) {
+				break;
+			}
 			//TODO: implement class validators
 		}
 
@@ -50,18 +53,13 @@ export class DecoratorValidator<T extends object> {
 		return new ValidationResult(propertyErrors, undefined);
 	}
 
-	private validatePropertyInGroup(
+	private executePropertyValidators(
 			parentPath: string,
 			property: string,
-			group: string,
 			targetInstance: T,
 			validators: RuntimeValidatorConfig[]
 	): ValidationError | undefined {
 		for (const validator of validators) {
-			if (validator.groups.indexOf(group) < 0) {
-				continue;
-			}
-
 			//FIXME: async
 			// console.log('type', typeof validator.validatorFn);
 			const propValue: any = (targetInstance as any)[property];
@@ -85,4 +83,8 @@ export class DecoratorValidator<T extends object> {
 
 		return undefined;
 	}
+}
+
+function validatorInGroup(validator: RuntimeValidatorConfig, group: string): boolean {
+	return validator.groups.indexOf(group) >= 0;
 }

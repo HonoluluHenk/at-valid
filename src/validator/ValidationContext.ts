@@ -136,9 +136,9 @@ export class ValidationContext {
 
 	private putValidator(validator: RuntimeValidatorConfig): void {
 		const allForClass = this.validatorsPerClass.get(validator.target.constructor) || {};
-		const allForProp = allForClass[validator.propertyKey] || [];
+		let allForProp = allForClass[validator.propertyKey] || [];
 
-		allForProp.push(validator);
+		allForProp = [validator, ...allForProp];
 		allForClass[validator.propertyKey] = allForProp;
 
 		this.validatorsPerClass.set(validator.target.constructor, allForClass);
