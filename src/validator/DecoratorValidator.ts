@@ -1,7 +1,8 @@
 //FIXME: remove this tslint:disable
-/* tslint:disable:no-console */
 import {DEFAULT_GROUP, RuntimeValidatorConfig, ValidationContext} from "./ValidationContext";
-import {ValidationResult} from "./ValidationResult";
+import {PropertyErrors, ValidationError, ValidationResult} from "./ValidationResult";
+
+const PATH_SEPARATOR = '.';
 
 export class DecoratorValidator<T extends object> {
 
@@ -16,24 +17,30 @@ export class DecoratorValidator<T extends object> {
 	 * @param groups
 	 */
 	public validate(targetInstance: T, groups: string[] = [DEFAULT_GROUP]): ValidationResult {
-		const allValidators = ValidationContext.instance.getValidatorsForClass(targetInstance);
-		// console.debug('allValidators: ', allValidators);
+		const validatorsByProperty = ValidationContext.instance.getValidatorsForClass(targetInstance);
+		// console.debug('validatorsByProperty: ', validatorsByProperty);
+
+		const propertyErrors: PropertyErrors = {};
 
 		for (const group of groups) {
 			// tslint:disable-next-line:forin
-			for (const property in allValidators) {
-				// console.debug("!!!!!! validation of prop: ", property);
-				const propertyValidators: RuntimeValidatorConfig[] = allValidators[property];
-
-				// console.debug("found propertyValidators: ", propertyValidators);
-				if (!propertyValidators) {
+			for (const propertyKey in validatorsByProperty) {
+				if (!validatorsByProperty.hasOwnProperty(propertyKey)) {
 					continue;
 				}
 
-				const result = this.validatePropertyInGroup(property, group, targetInstance, propertyValidators);
+				// console.debug("!!!!!! validation of prop: ", propertyKey);
+				const validators: RuntimeValidatorConfig[] = validatorsByProperty[propertyKey];
+
+				// console.debug("found validators for propertyKey: ", propertyKey, validators);
+				if (!validators) {
+					continue;
+				}
+
+				const error = this.validatePropertyInGroup("", propertyKey, group, targetInstance, validators);
 				// console.debug('result: ', result);
-				if (result.error) {
-					return result;
+				if (error) {
+					propertyErrors[propertyKey] = error;
 				}
 			}
 
@@ -41,15 +48,16 @@ export class DecoratorValidator<T extends object> {
 		}
 
 		// console.debug('ok');
-		return new ValidationResult();
+		return new ValidationResult(propertyErrors, undefined);
 	}
 
 	private validatePropertyInGroup(
+			parentPath: string,
 			property: string,
 			group: string,
 			targetInstance: T,
 			validators: RuntimeValidatorConfig[]
-	) {
+	): ValidationError | undefined {
 		for (const validator of validators) {
 			if (validator.groups.indexOf(group) < 0) {
 				continue;
@@ -58,15 +66,24 @@ export class DecoratorValidator<T extends object> {
 			//FIXME: async
 			// console.log('type', typeof validator.validatorFn);
 			const propValue: any = (targetInstance as any)[property];
-			const clonedFnContext = validator.cloneValidatorCnContext();
+			const clonedFnContext = validator.cloneValidatorFnContext();
 			const ok = validator.validatorFn(propValue, clonedFnContext, targetInstance);
 			// console.debug('func result:', ok);
 
+			const path = [parentPath, property]
+					.filter(e => !!e)
+					.join(PATH_SEPARATOR);
+
 			if (!ok) {
-				return new ValidationResult({validatorFnContext: clonedFnContext});
+				return {
+					propertyKey: property,
+					path,
+					validatorName: validator.name,
+					validatorFnContext: validator.validatorFnContext
+				};
 			}
 		}
 
-		return new ValidationResult();
+		return undefined;
 	}
 }

@@ -12,7 +12,7 @@ export interface CustomContext {
 	[key: string]: any
 }
 
-//FIXME: do not forget to add context from register*() function to the ultimate ValidationError subclass
+//FIXME: do not forget to add customContext from register*() function to the ultimate ValidationError subclass
 
 export type ValidatorFn<V, T extends object = object> =
 		(value: V | undefined | null, ctx: ValidatorFnContext, targetInstance: T)
@@ -41,12 +41,11 @@ export class RuntimeValidatorConfig {
 			public readonly target: object,
 			public readonly validatorFn: ValidatorFn<any>/*|AsyncValidatorFn<V>*/,
 			public readonly validatorFnContext: ValidatorFnContext,
-			public readonly messageOverride: string,
 			public readonly groups: string[],
 	) {
 	}
 
-	public cloneValidatorCnContext(): ValidatorFnContext {
+	public cloneValidatorFnContext(): ValidatorFnContext {
 		return JSON.parse(JSON.stringify(this.validatorFnContext));
 	}
 }
@@ -70,22 +69,23 @@ export interface PropertyValidator<V> {
 	 */
 	//FIXME: async
 	validatorFn: ValidatorFn<V>; /*|AsyncValidatorFn<V>*/
+	//FIXME: document
+	opts: Opts | undefined
 	/**
 	 * If your validator function needs arguments (e.g.: the min-length of a string), provide them here.
 	 */
-	messageArgs?: object;
-	/**
-	 * Allow overriding the default message.
-	 */
-	messageOverride?: string;
+	messageArgs?: object | undefined;
+}
+
+export interface Opts {
 	/**
 	 * Validation group(s) this validator belongs to, defaults to {@link  DEFAULT_GROUP}.
 	 */
 	groups?: string | string[]
 	/**
-	 * Some more custom context information for your validator function, also passed through to the error message.
+	 * Some more custom customContext information for your validator function, also passed through to the error message.
 	 */
-	context?: CustomContext;
+	customContext?: CustomContext;
 }
 
 export class ValidationContext {
@@ -107,18 +107,19 @@ export class ValidationContext {
 	private readonly validatorsPerClass: Map<object, RuntimeValidatorConfigMap> = new Map();
 
 	public registerPropertyValidator<V>(
-			opts: PropertyValidator<V>
+			params: PropertyValidator<V>
 	): number {
-		// console.log('registerPropertyValidatio called: ', opts);
+		// console.log('registerPropertyValidatio called: ', params);
+
+		const opts = params.opts || {};
 
 		const validator = new RuntimeValidatorConfig(
-			required(opts.name, "name/class"),
-			required(opts.propertyKey, "propertyKey"),
-			required(opts.target, "target"),
-			required(opts.validatorFn, "validatorFn"),
-			{args: (opts.messageArgs || {}), customContext: opts.context || {}},
-			opts.messageOverride || "",
-			(typeof opts.groups === 'string' ? [opts.groups] : opts.groups) || [DEFAULT_GROUP],
+				required(params.name, "name/class"),
+				required(params.propertyKey, "propertyKey"),
+				required(params.target, "target"),
+				required(params.validatorFn, "validatorFn"),
+				{args: (params.messageArgs || {}), customContext: opts.customContext || {}},
+				(typeof opts.groups === 'string' ? [opts.groups] : opts.groups) || [DEFAULT_GROUP],
 		);
 
 		if (typeof validator.propertyKey === 'symbol') {

@@ -3,7 +3,7 @@ import {MaxLength} from './MaxLength';
 
 describe('MaxLength', () => {
 	class Foo {
-		@MaxLength(5)
+		@MaxLength(5, {customContext: {should: "propagate to error"}})
 		public bar?: string | null;
 
 		constructor(bar: string | null | undefined) {
@@ -12,11 +12,11 @@ describe('MaxLength', () => {
 	}
 
 	describe('wrong type', () => {
-		const fixture = new Foo(5 as any as string);
+		const fixture = new Foo({} as string);
 
-		it('should throw', () => {
-			expect(() => new DecoratorValidator().validate(fixture))
-					.toThrowError("invalid type: number, required type: string");
+		it('should never validate', () => {
+			expect(new DecoratorValidator().validate(fixture).isSuccess)
+					.toEqual(false);
 		});
 	});
 
@@ -44,11 +44,30 @@ describe('MaxLength', () => {
 		];
 
 		params.forEach(param => {
+
 			it(`should fail (${param.text})`, () => {
-				expect(new DecoratorValidator().validate(new Foo(param.text)).isSuccess)
-						.toBe(false);
-			})
+				const actual = new DecoratorValidator().validate(new Foo(param.text));
+
+				expect(actual.isSuccess)
+						.toEqual(false);
+			});
+
+			it(`should have the desired error message (${param.text})`, () => {
+				const actual = new DecoratorValidator().validate(new Foo(param.text));
+
+				expect(actual.propertyErrors)
+						.toEqual({
+							bar: {
+								validatorName: 'MaxLength',
+								propertyKey: 'bar',
+								path: 'bar',
+								validatorFnContext: {
+									args: {max: 5},
+									customContext: {should: "propagate to error"}
+								}
+							}
+						});
+			});
 		});
 	});
-
 });

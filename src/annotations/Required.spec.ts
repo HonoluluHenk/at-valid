@@ -1,9 +1,8 @@
 import {DecoratorValidator} from "../validator/DecoratorValidator";
 import {Required} from "./Required";
 
-// @Foobar('class')
 class Foo {
-	@Required()
+	@Required({customContext: {should: "propagate to error"}})
 	public bar?: any | null | undefined;
 
 	constructor(bar: any | null | undefined) {
@@ -24,12 +23,28 @@ describe('Required', () => {
 				const fixture = new Foo(param.input);
 
 				const actual = new DecoratorValidator()
-						.validate(fixture)
-						.isSuccess;
+						.validate(fixture);
 
-				expect(actual)
+				expect(actual.isSuccess)
 						.toBe(false);
 
+			});
+
+			it(`should have the desired error message (${param.input})`, () => {
+				const actual = new DecoratorValidator().validate(new Foo(param.input));
+
+				expect(actual.propertyErrors)
+						.toEqual({
+							bar: {
+								validatorName: 'Required',
+								propertyKey: 'bar',
+								path: 'bar',
+								validatorFnContext: {
+									args: {},
+									customContext: {should: "propagate to error"}
+								}
+							}
+						});
 			});
 		});
 	});
