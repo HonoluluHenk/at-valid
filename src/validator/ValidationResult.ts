@@ -12,12 +12,30 @@ export interface PropertyErrors {
 }
 
 export class ValidationResult {
+
+	public get isSuccess(): boolean {
+		return this.success;
+	}
+
+	public get isError(): boolean {
+		return !this.success;
+	}
+
+	public static success(): ValidationResult {
+		return new ValidationResult();
+	}
+
+	public static create(propertyErrors: PropertyErrors | undefined,
+						classError: ValidationError | undefined): ValidationResult {
+		return new ValidationResult(propertyErrors, classError);
+	}
+
 	public readonly propertyErrors: PropertyErrors;
 	public readonly classError?: ValidationError;
 
 	private readonly success: boolean;
 
-	constructor(
+	private constructor(
 			propertyErrors?: PropertyErrors,
 			classError?: ValidationError
 	) {
@@ -29,14 +47,6 @@ export class ValidationResult {
 		const failure = (this.propertyErrors && hasProperties(this.propertyErrors))
 				|| this.classError;
 		this.success = !failure;
-	}
-
-	public get isSuccess(): boolean {
-		return this.success;
-	}
-
-	public get isError(): boolean {
-		return !this.success;
 	}
 
 }

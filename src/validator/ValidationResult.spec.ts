@@ -1,8 +1,24 @@
 import {PropertyErrors, ValidationError, ValidationResult} from './ValidationResult';
 
 describe('ValidationResult', () => {
+	describe('success builder', () => {
+		it('should create a success instance', () => {
+			const actual = ValidationResult.success();
 
-	describe('isSuccess/isError', () => {
+			expect (actual.isSuccess)
+					.toEqual(true);
+			expect(actual.isError)
+					.toEqual(false);
+			expect(actual.propertyErrors)
+					.toEqual({});
+			expect(actual.classError)
+					.toBeUndefined();
+		});
+
+
+	});
+
+	describe('create', () => {
 		const params = [
 			// no errors
 			{propertyErrors: undefined, classErrors: undefined, success: true},
@@ -18,7 +34,7 @@ describe('ValidationResult', () => {
 
 		params.forEach((param, idx) => {
 			it(`should set isSuccess/isError accordingly (#${idx})`, () => {
-				const actual = new ValidationResult(param.propertyErrors as PropertyErrors, param.classErrors);
+				const actual = ValidationResult.create(param.propertyErrors as PropertyErrors, param.classErrors);
 				expect(actual.isSuccess)
 						.withContext("isSuccess")
 						.toEqual(param.success);
@@ -27,6 +43,7 @@ describe('ValidationResult', () => {
 						.toEqual(!param.success);
 			});
 		});
+
 	});
 });
 

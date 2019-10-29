@@ -14,11 +14,7 @@ export interface CustomContext {
 
 export type ValidatorFn<V, T extends object = object> =
 		(value: V | undefined | null, ctx: ValidatorFnContext, targetInstance: T)
-				=> boolean;
-
-export type AsyncValidatorFn<V, T = object> =
-		(value: V | undefined | null, ctx: ValidatorFnContext, targetInstance: T)
-				=> Promise<boolean>;
+				=> boolean | PromiseLike<boolean>;
 
 export interface RuntimeValidatorConfigMap {
 	[key: string]: RuntimeValidatorConfig[]
@@ -37,7 +33,7 @@ export class RuntimeValidatorConfig {
 			public readonly name: string,
 			public readonly propertyKey: string,
 			public readonly target: object,
-			public readonly validatorFn: ValidatorFn<any> | AsyncValidatorFn<any>,
+			public readonly validatorFn: ValidatorFn<any>,
 			public readonly validatorFnContext: ValidatorFnContext,
 			public readonly groups: string[],
 	) {
@@ -65,8 +61,7 @@ export interface PropertyValidator<V> {
 	/**
 	 * The actual function that does the validation.
 	 */
-	//FIXME: async
-	validatorFn: ValidatorFn<V> | AsyncValidatorFn<V>
+	validatorFn: ValidatorFn<V>
 	//FIXME: document
 	opts: Opts | undefined
 	/**
