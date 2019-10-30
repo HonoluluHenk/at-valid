@@ -1,6 +1,6 @@
 import {distinct} from '../util/filters/distinct';
 import {toObject} from '../util/reducers/toObject';
-import {DEFAULT_GROUP, RuntimeValidatorConfig, ValidationContext, ValidatorFnContext} from "./ValidationContext";
+import {DEFAULT_GROUP, PropertyValidator, ValidationContext, ValidatorFnContext} from "./ValidationContext";
 import {ValidationError, ValidationResult} from "./ValidationResult";
 
 const PATH_SEPARATOR = '.';
@@ -9,19 +9,17 @@ export interface ValidateParams {
 	groups?: string[];
 }
 
-export interface PropertyValidators {
-	[key: string]: RuntimeValidatorConfig[]
-
-}
-
 export interface GroupPlan {
-	group: string,
-	propertyValidators: PropertyValidators,
+	targetInstance: object,
+	propertyValidators: {
+		[property: string]: PropertyValidator[]
+	}
 }
 
 export interface ExecutionPlan {
-	params: Required<ValidateParams>,
-	plans: GroupPlan[]
+	groups: {
+		[group: string]: GroupPlan
+	}
 }
 
 export class DecoratorValidator<T extends object> {
@@ -39,9 +37,10 @@ export class DecoratorValidator<T extends object> {
 	public async validate(targetInstance: T, params?: ValidateParams): Promise<ValidationResult> {
 		const groupPlans = this.buildExecutionPlan(targetInstance, params);
 
-		for (const groupPlan of groupPlans.plans.values()) {
+		for (const group of Object.keys(groupPlans.groups)) {
+			const groupPlan = groupPlans.groups[group];
 			const validatorPromises: Array<Promise<ValidationError | undefined>> = Object.keys(groupPlan.propertyValidators)
-					.map(propertyKey => runValidators(targetInstance, groupPlan.propertyValidators[propertyKey]));
+					.map(propertyKey => runValidators(groupPlan.targetInstance, groupPlan.propertyValidators[propertyKey]));
 
 			const validationResult = await Promise.all(validatorPromises)
 					.then(groupResults => groupResults.filter(x => !!x) as ValidationError[])
@@ -63,23 +62,25 @@ export class DecoratorValidator<T extends object> {
 		};
 
 		const result: ExecutionPlan = {
-			params: parsedParams,
-			plans: []
+			groups: {}
 		};
 
-		const executed: { [key: string]: RuntimeValidatorConfig[] } = {};
+		const executed: { [property: string]: PropertyValidator[] } = {};
 
 		const validatorsByProperty = ValidationContext.instance.getValidatorsForClass(targetInstance);
 		// console.debug('validatorsByProperty: ', validatorsByProperty);
 
 		for (const group of parsedParams.groups) {
-			const groupPlan: GroupPlan = {group, propertyValidators: {}};
+			const groupPlan: GroupPlan = {
+				targetInstance,
+				propertyValidators: {}
+			};
 
 			for (const propertyKey of Object.keys(validatorsByProperty)) {
 				executed[propertyKey] = executed[propertyKey] || [];
 
 				// console.debug("!!!!!! validation of prop: ", propertyKey);
-				const validators: RuntimeValidatorConfig[] = validatorsByProperty[propertyKey]
+				const validators: PropertyValidator[] = validatorsByProperty[propertyKey]
 						.filter(validator => validatorInGroup(validator, group))
 						.filter(validator => executed[propertyKey].indexOf(validator) < 0)
 						.filter(distinct());
@@ -87,11 +88,10 @@ export class DecoratorValidator<T extends object> {
 				executed[propertyKey].push(...validators);
 
 				groupPlan.propertyValidators[propertyKey] = validators;
-
 			}
 
+			result.groups[group] = groupPlan;
 			//TODO: implement class validators
-			result.plans.push(groupPlan);
 		}
 
 		// console.debug('ok');
@@ -99,11 +99,11 @@ export class DecoratorValidator<T extends object> {
 	}
 }
 
-function validatorInGroup(validator: RuntimeValidatorConfig, group: string): boolean {
+function validatorInGroup(validator: PropertyValidator, group: string): boolean {
 	return validator.groups.indexOf(group) >= 0;
 }
 
-function mapToValidationError(ok: boolean, rvc: RuntimeValidatorConfig,
+function mapToValidationError(ok: boolean, rvc: PropertyValidator,
 							  validatorFnContext: ValidatorFnContext
 ): ValidationError | undefined {
 	if (ok) {
@@ -125,10 +125,20 @@ function mapToValidationError(ok: boolean, rvc: RuntimeValidatorConfig,
 	};
 }
 
-function execute(targetInstance: object, rvc: RuntimeValidatorConfig): Promise<ValidationError | undefined> {
+async function execute(targetInstance: object, rvc: PropertyValidator): Promise<ValidationError | undefined> {
 
 	const validatorFnContext = rvc.cloneValidatorFnContext();
-	const validationResult = rvc.validatorFn((targetInstance as any)[rvc.propertyKey], validatorFnContext, targetInstance);
+
+	let validationResult;
+	switch (rvc.validatorFn) {
+		case "NESTED":
+			validationResult = true;
+			validationResult = (rvc as any).validatorFn((targetInstance as any)[rvc.propertyKey], validatorFnContext, targetInstance);
+			break;
+		default:
+			validationResult = rvc.validatorFn((targetInstance as any)[rvc.propertyKey], validatorFnContext, targetInstance);
+			break;
+	}
 
 	let promise: Promise<boolean>;
 
@@ -146,7 +156,7 @@ function execute(targetInstance: object, rvc: RuntimeValidatorConfig): Promise<V
 }
 
 async function runValidators(targetInstance: object,
-							 validators: RuntimeValidatorConfig[]): Promise<ValidationError | undefined> {
+							 validators: PropertyValidator[]): Promise<ValidationError | undefined> {
 	for (const rcv of validators.values()) {
 		const err = await execute(targetInstance, rcv);
 		if (err) {

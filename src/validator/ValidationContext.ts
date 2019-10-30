@@ -1,6 +1,8 @@
 /**
  * The default validation group.
  */
+import {ValidatorNames} from "../annotations/ValidatorNames";
+
 export const DEFAULT_GROUP = "DEFAULT";
 
 /**
@@ -16,8 +18,10 @@ export type ValidatorFn<V, T extends object = object> =
 		(value: V | undefined | null, ctx: ValidatorFnContext, targetInstance: T)
 				=> boolean | PromiseLike<boolean>;
 
+export type ValidatorFnLike<V, T extends object = object> = ValidatorFn<V, T> | 'NESTED';
+
 export interface RuntimeValidatorConfigMap {
-	[key: string]: RuntimeValidatorConfig[]
+	[property: string]: PropertyValidator[]
 }
 
 export interface ValidatorFnContext {
@@ -26,14 +30,14 @@ export interface ValidatorFnContext {
 }
 
 /**
- * a normalized and validated view of {@link PropertyValidator}
+ * a normalized and validated view of {@link PropertyValidatorConfig}
  */
-export class RuntimeValidatorConfig {
+export class PropertyValidator {
 	constructor(
 			public readonly name: string,
 			public readonly propertyKey: string,
 			public readonly target: object,
-			public readonly validatorFn: ValidatorFn<any>,
+			public readonly validatorFn: ValidatorFnLike<any>,
 			public readonly validatorFnContext: ValidatorFnContext,
 			public readonly groups: string[],
 	) {
@@ -44,7 +48,7 @@ export class RuntimeValidatorConfig {
 	}
 }
 
-export interface PropertyValidator<V> {
+export interface PropertyValidatorConfig<V> {
 	/**
 	 * The name of this validator.
 	 * Most commonly this is the name of the annotation (e.g.: Required, MinLength, ...).
@@ -61,7 +65,7 @@ export interface PropertyValidator<V> {
 	/**
 	 * The actual function that does the validation.
 	 */
-	validatorFn: ValidatorFn<V>
+	validatorFn: ValidatorFnLike<V>
 	//FIXME: document
 	opts: Opts | undefined
 	/**
@@ -81,6 +85,20 @@ export interface Opts {
 	customContext?: CustomContext;
 }
 
+export interface NestedOpts {
+	/**
+	 * Validation group(s) this validator belongs to, defaults to {@link  DEFAULT_GROUP}.
+	 */
+	groups?: string | string[]
+}
+
+interface NestedValidatorConfig {
+	propertyKey: string;
+	opts: NestedOpts | undefined;
+	name: string;
+	target: object;
+}
+
 export class ValidationContext {
 
 	public static get instance() {
@@ -88,6 +106,10 @@ export class ValidationContext {
 	}
 
 	public static readonly _instance: ValidationContext = new ValidationContext();
+
+	private static parseGroups(groups?: string | string[]): string[] {
+		return (typeof groups === 'string' ? [groups] : groups) || [DEFAULT_GROUP]
+	}
 
 	/**
 	 * ClassOrName -&gt; (propertyName -&gt; Validation).
@@ -100,19 +122,19 @@ export class ValidationContext {
 	private readonly validatorsPerClass: Map<object, RuntimeValidatorConfigMap> = new Map();
 
 	public registerPropertyValidator<V>(
-			params: PropertyValidator<V>
-	): number {
-		// console.log('registerPropertyValidatio called: ', params);
+			config: PropertyValidatorConfig<V>
+	) {
+		// console.log('registerPropertyValidatio called: ', config);
 
-		const opts = params.opts || {};
+		const opts = config.opts || {};
 
-		const validator = new RuntimeValidatorConfig(
-				required(params.name, "name/class"),
-				required(params.propertyKey, "propertyKey"),
-				required(params.target, "target"),
-				required(params.validatorFn, "validatorFn"),
-				{args: (params.messageArgs || {}), customContext: opts.customContext || {}},
-				(typeof opts.groups === 'string' ? [opts.groups] : opts.groups) || [DEFAULT_GROUP],
+		const validator = new PropertyValidator(
+				required(config.name, "name/class"),
+				required(config.propertyKey, "propertyKey"),
+				required(config.target, "target"),
+				required(config.validatorFn, "validatorFn"),
+				{args: (config.messageArgs || {}), customContext: opts.customContext || {}},
+				ValidationContext.parseGroups(opts.groups),
 		);
 
 		if (typeof validator.propertyKey === 'symbol') {
@@ -121,15 +143,33 @@ export class ValidationContext {
 
 		// console.debug('registering validator: ', validator);
 		this.putValidator(validator);
+	}
 
-		return 0;
+	public registerNested(config: NestedValidatorConfig): void {
+
+		const opts = config.opts || {};
+
+		// *sigh*... cannot get the type of the nested property from the class definition,
+		// we have to wait for an actual instance (i.e.: until the execution plan is generated).
+
+		const validator = new PropertyValidator(
+						ValidatorNames.Nested,
+						required(config.propertyKey, "propertyKey"),
+						required(config.target, "target"),
+				'NESTED',
+				{args: {}, customContext: {}},
+						ValidationContext.parseGroups(opts.groups),
+		);
+
+		this.putValidator(validator);
+
 	}
 
 	public getValidatorsForClass(object: object): RuntimeValidatorConfigMap {
 		return this.validatorsPerClass.get(object.constructor) || {};
 	}
 
-	private putValidator(validator: RuntimeValidatorConfig): void {
+	private putValidator(validator: PropertyValidator): void {
 		const allForClass = this.validatorsPerClass.get(validator.target.constructor) || {};
 		let allForProp = allForClass[validator.propertyKey] || [];
 

@@ -1,5 +1,7 @@
 {
-	"helpers": ["tests/helpers.ts"],
+	"helpers": [
+		"tests/helpers.ts"
+	],
 	"spec_dir": "",
 	"spec_files": [
 		"src/**/*.spec.ts",
@@ -11,7 +13,9 @@
 		{
 			"name": "jasmine-spec-reporter#SpecReporter",
 			"options": {
-				"displayStacktrace": "all"
+				"spec": {
+					"displayStacktrace": true
+				}
 			}
 		}
 	]

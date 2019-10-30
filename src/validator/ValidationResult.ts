@@ -8,7 +8,7 @@ export interface ValidationError {
 }
 
 export interface PropertyErrors {
-	[key: string]: ValidationError
+	[property: string]: ValidationError
 }
 
 export class ValidationResult {
