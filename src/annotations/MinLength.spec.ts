@@ -64,7 +64,7 @@ describe('MinLength', () => {
 							bar: {
 								validatorName: 'MinLength',
 								propertyKey: 'bar',
-								path: 'bar',
+								path: '$.bar',
 								validatorFnContext: {
 									args: {min: 5},
 									customContext: {should: "propagate to error"}

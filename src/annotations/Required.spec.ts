@@ -38,7 +38,7 @@ describe('Required', () => {
 							bar: {
 								validatorName: 'Required',
 								propertyKey: 'bar',
-								path: 'bar',
+								path: '$.bar',
 								validatorFnContext: {
 									args: {},
 									customContext: {should: "propagate to error"}

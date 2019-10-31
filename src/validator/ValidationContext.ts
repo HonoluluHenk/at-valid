@@ -2,6 +2,7 @@
  * The default validation group.
  */
 import {ValidatorNames} from "../annotations/ValidatorNames";
+import {distinct} from "../util/filters/distinct";
 
 export const DEFAULT_GROUP = "DEFAULT";
 
@@ -92,12 +93,28 @@ export interface NestedOpts {
 	groups?: string | string[]
 }
 
-interface NestedValidatorConfig {
+export interface NestedValidatorConfig {
 	propertyKey: string;
 	opts: NestedOpts | undefined;
 	name: string;
 	target: object;
 }
+
+export interface GroupPlan {
+	targetInstance: object,
+	propertyValidators: {
+		[property: string]: PropertyValidator[]
+	}
+	//TODO:
+	// classValidator?: ClassValidator
+}
+
+export interface ExecutionPlan {
+	groups: {
+		[group: string]: GroupPlan
+	}
+}
+
 
 export class ValidationContext {
 
@@ -106,10 +123,6 @@ export class ValidationContext {
 	}
 
 	public static readonly _instance: ValidationContext = new ValidationContext();
-
-	private static parseGroups(groups?: string | string[]): string[] {
-		return (typeof groups === 'string' ? [groups] : groups) || [DEFAULT_GROUP]
-	}
 
 	/**
 	 * ClassOrName -&gt; (propertyName -&gt; Validation).
@@ -134,7 +147,7 @@ export class ValidationContext {
 				required(config.target, "target"),
 				required(config.validatorFn, "validatorFn"),
 				{args: (config.messageArgs || {}), customContext: opts.customContext || {}},
-				ValidationContext.parseGroups(opts.groups),
+				parseGroups(opts.groups),
 		);
 
 		if (typeof validator.propertyKey === 'symbol') {
@@ -153,12 +166,12 @@ export class ValidationContext {
 		// we have to wait for an actual instance (i.e.: until the execution plan is generated).
 
 		const validator = new PropertyValidator(
-						ValidatorNames.Nested,
-						required(config.propertyKey, "propertyKey"),
-						required(config.target, "target"),
+				ValidatorNames.Nested,
+				required(config.propertyKey, "propertyKey"),
+				required(config.target, "target"),
 				'NESTED',
 				{args: {}, customContext: {}},
-						ValidationContext.parseGroups(opts.groups),
+				parseGroups(opts.groups),
 		);
 
 		this.putValidator(validator);
@@ -167,6 +180,42 @@ export class ValidationContext {
 
 	public getValidatorsForClass(object: object): RuntimeValidatorConfigMap {
 		return this.validatorsPerClass.get(object.constructor) || {};
+	}
+
+	public buildExecutionPlan(targetInstance: object, groups: string[]): ExecutionPlan {
+
+		const result: ExecutionPlan = {
+			groups: {}
+		};
+
+		const executed: { [property: string]: PropertyValidator[] } = {};
+
+		const validatorsByProperty = ValidationContext.instance.getValidatorsForClass(targetInstance);
+
+		for (const group of groups) {
+			const groupPlan: GroupPlan = {
+				targetInstance,
+				propertyValidators: {}
+			};
+
+			for (const propertyKey of Object.keys(validatorsByProperty)) {
+				executed[propertyKey] = executed[propertyKey] || [];
+
+				const validators: PropertyValidator[] = validatorsByProperty[propertyKey]
+						.filter(validator => validatorInGroup(validator, group))
+						.filter(validator => executed[propertyKey].indexOf(validator) < 0)
+						.filter(distinct());
+
+				executed[propertyKey].push(...validators);
+
+				groupPlan.propertyValidators[propertyKey] = validators;
+			}
+
+			result.groups[group] = groupPlan;
+			//TODO: implement class validators
+		}
+
+		return result;
 	}
 
 	private putValidator(validator: PropertyValidator): void {
@@ -178,6 +227,15 @@ export class ValidationContext {
 
 		this.validatorsPerClass.set(validator.target.constructor, allForClass);
 	}
+}
+
+function parseGroups(groups?: string | string[]): string[] {
+	return (typeof groups === 'string' ? [groups] : groups) || [DEFAULT_GROUP]
+}
+
+
+function validatorInGroup(validator: PropertyValidator, group: string): boolean {
+	return validator.groups.indexOf(group) >= 0;
 }
 
 function required<T>(value: T | null | undefined, description: string): T {

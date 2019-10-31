@@ -4,7 +4,8 @@ export interface ValidationError {
 	readonly validatorName: string
 	readonly propertyKey: string,
 	readonly path: string,
-	readonly validatorFnContext?: ValidatorFnContext,
+	readonly validatorFnContext: ValidatorFnContext,
+	readonly childValidation?: ValidationResult
 }
 
 export interface PropertyErrors {
@@ -25,8 +26,10 @@ export class ValidationResult {
 		return new ValidationResult();
 	}
 
-	public static create(propertyErrors: PropertyErrors | undefined,
-						classError: ValidationError | undefined): ValidationResult {
+	public static create(
+			propertyErrors: PropertyErrors | undefined,
+			classError: ValidationError | undefined
+	): ValidationResult {
 		return new ValidationResult(propertyErrors, classError);
 	}
 

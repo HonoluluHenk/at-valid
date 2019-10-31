@@ -64,7 +64,7 @@ describe('MaxLength', () => {
 							bar: {
 								validatorName: 'MaxLength',
 								propertyKey: 'bar',
-								path: 'bar',
+								path: '$.bar',
 								validatorFnContext: {
 									args: {max: 5},
 									customContext: {should: "propagate to error"}

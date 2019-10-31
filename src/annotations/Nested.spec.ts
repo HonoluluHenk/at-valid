@@ -1,0 +1,67 @@
+import {DecoratorValidator} from "../validator/DecoratorValidator";
+import {ValidationResult} from "../validator/ValidationResult";
+import {Nested} from "./Nested";
+import {Required} from "./Required";
+
+describe('Nested', () => {
+	class Inner {
+		@Required()
+		public banana?: string;
+
+		constructor(banana?: string) {
+			this.banana = banana;
+		}
+	}
+
+	class Outer {
+		@Nested()
+		public bar?: Inner;
+
+		constructor(bar?: Inner) {
+			this.bar = bar;
+		}
+	}
+
+	it('should succeed on an empty but not required nested instance', async () => {
+		const actual = await new DecoratorValidator().validate(new Outer());
+
+		expect(actual.isSuccess)
+				.toBe(true);
+	});
+
+	it('should succeed on a valid nested instance', async () => {
+		const actual = await new DecoratorValidator().validate(new Outer(new Inner("Hello World")));
+
+		expect(actual.isSuccess)
+				.toBe(true);
+	});
+
+	it('should fail on an invalid nested instance', async () => {
+		const actual = await new DecoratorValidator().validate(new Outer(new Inner()));
+
+		expect(actual.isSuccess)
+				.toBe(false);
+
+		expect(actual)
+				.toEqual(ValidationResult.create({
+							bar: {
+								validatorName: "Nested",
+								propertyKey: "bar",
+								path: "$.bar",
+								validatorFnContext: {args: {}, customContext: {}},
+								childValidation: ValidationResult.create({
+											banana: {
+												validatorName: "Required",
+												propertyKey: "banana",
+												path: "$.bar.banana",
+												validatorFnContext: {args: {}, customContext: {}},
+											}
+										}
+										, undefined
+								)
+							}
+						},
+						undefined));
+	});
+
+});
