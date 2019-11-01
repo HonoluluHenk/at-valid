@@ -1,7 +1,7 @@
 import {DecoratorValidator} from "../validator/DecoratorValidator";
 import {ValidationResult} from "../validator/ValidationResult";
 import {Nested} from "./Nested";
-import {Required} from "./Required";
+import {Required} from "./constraints/Required";
 
 describe('Nested', () => {
 	class Inner {
@@ -37,7 +37,8 @@ describe('Nested', () => {
 	});
 
 	it('should fail on an invalid nested instance', async () => {
-		const actual = await new DecoratorValidator().validate(new Outer(new Inner()));
+		const fixture = new Outer(new Inner());
+		const actual = await new DecoratorValidator().validate(fixture);
 
 		expect(actual.isSuccess)
 				.toBe(false);
@@ -47,12 +48,14 @@ describe('Nested', () => {
 							bar: {
 								validatorName: "Nested",
 								propertyKey: "bar",
+								value: fixture.bar,
 								path: "$.bar",
 								validatorFnContext: {args: {}, customContext: {}},
 								childValidation: ValidationResult.create({
 											banana: {
 												validatorName: "Required",
 												propertyKey: "banana",
+												value: fixture.bar!.banana,
 												path: "$.bar.banana",
 												validatorFnContext: {args: {}, customContext: {}},
 											}

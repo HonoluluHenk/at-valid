@@ -61,6 +61,7 @@ function appendPath(parentPath: string, childPath: string) {
 
 function mapToValidationError(
 		ok: boolean,
+		value: any,
 		validator: PropertyValidator,
 		validatorFnContext: ValidatorFnContext,
 		instancePath: string,
@@ -74,6 +75,7 @@ function mapToValidationError(
 
 	const result : ValidationError = {
 		propertyKey: validator.propertyKey,
+		value,
 		path,
 		validatorName: validator.name,
 		validatorFnContext
@@ -119,8 +121,9 @@ async function executeValidator(
 	let success: boolean | PromiseLike<boolean>;
 	let childValidation: ValidationResult | undefined;
 
+	const value: any = (targetInstance as any)[validator.propertyKey];
 	if (validator.validatorFn === "NESTED") {
-		const nestedTarget = (targetInstance as any)[validator.propertyKey];
+		const nestedTarget = value;
 		if (nestedTarget) {
 			childValidation = await nestedHandler(nestedTarget, appendPath(instancePath, validator.propertyKey));
 			success = !!childValidation && childValidation.isSuccess;
@@ -128,7 +131,7 @@ async function executeValidator(
 			success = true;
 		}
 	} else {
-		success = validator.validatorFn((targetInstance as any)[validator.propertyKey], validatorFnContext, targetInstance);
+		success = validator.validatorFn(value, validatorFnContext, targetInstance);
 	}
 
 	let promise: Promise<boolean>;
@@ -142,7 +145,7 @@ async function executeValidator(
 	}
 
 	return promise
-			.then(ok => mapToValidationError(ok, validator, validatorFnContext, instancePath, childValidation));
+			.then(ok => mapToValidationError(ok, value, validator, validatorFnContext, instancePath, childValidation));
 
 }
 

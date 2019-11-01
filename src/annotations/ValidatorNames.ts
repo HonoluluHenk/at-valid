@@ -1,6 +1,10 @@
 export enum ValidatorNames {
+	IsNumber= 'IsNumber',
 	Required = 'Required',
-	Nested = 'Nested',
 	MinLength = 'MinLength',
-	MaxLength = 'MaxLength'
+	MaxLength = 'MaxLength',
+
+	// structural
+	Nested = 'Nested',
 }
+

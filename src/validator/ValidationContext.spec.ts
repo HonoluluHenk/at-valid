@@ -1,5 +1,5 @@
 import {Nested} from "../annotations/Nested";
-import {Required} from "../annotations/Required";
+import {Required} from "../annotations/constraints/Required";
 import {DEFAULT_GROUP, ExecutionPlan, PropertyValidator, ValidationContext} from "./ValidationContext";
 
 describe('ValidationContext', () => {

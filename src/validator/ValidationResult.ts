@@ -3,6 +3,7 @@ import {ValidatorFnContext} from './ValidationContext';
 export interface ValidationError {
 	readonly validatorName: string
 	readonly propertyKey: string,
+	readonly value: any,
 	readonly path: string,
 	readonly validatorFnContext: ValidatorFnContext,
 	readonly childValidation?: ValidationResult
@@ -28,7 +29,7 @@ export class ValidationResult {
 
 	public static create(
 			propertyErrors: PropertyErrors | undefined,
-			classError: ValidationError | undefined
+			classError?: ValidationError | undefined
 	): ValidationResult {
 		return new ValidationResult(propertyErrors, classError);
 	}

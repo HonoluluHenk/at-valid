@@ -1,7 +1,7 @@
 {
-	"name": "annotated-validator",
+	"name": "at-valid",
 	"version": "1.0.0",
-	"description": "Validate objects by using annotations",
+	"description": "Validate objects by assigning decorators/annotations to properties.",
 	"main": "index.js",
 	"scripts": {
 		"format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",

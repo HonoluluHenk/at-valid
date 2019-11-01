@@ -1,6 +1,6 @@
-import {isEmpty} from "../util/isEmpty";
-import {Opts, ValidationContext} from "../validator/ValidationContext";
-import {ValidatorNames} from './ValidatorNames';
+import {isEmpty} from "../../util/isEmpty";
+import {Opts, ValidationContext} from "../../validator/ValidationContext";
+import {ValidatorNames} from '../ValidatorNames';
 
 /**
  * Can be used on anything with a &quot;length&quot; property (e.g.: strings and arrays)
