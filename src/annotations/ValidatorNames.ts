@@ -3,6 +3,7 @@ export enum ValidatorNames {
 	Required = 'Required',
 	MinLength = 'MinLength',
 	MaxLength = 'MaxLength',
+	Min = 'Min',
 
 	// structural
 	Nested = 'Nested',

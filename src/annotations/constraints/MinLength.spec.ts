@@ -25,6 +25,7 @@ describe('MinLength', () => {
 		"Hello World"
 	];
 
+	// noinspection MagicNumberJS
 	const invalids = [
 		"",
 		"1234",
@@ -37,7 +38,7 @@ describe('MinLength', () => {
 		true,
 		false,
 		Symbol(),
-	]
+	];
 
 	testBuilder("MinLength", "bar", TestClass, {min: 5})
 			.build(valids, invalids);
