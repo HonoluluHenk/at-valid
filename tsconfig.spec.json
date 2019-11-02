@@ -2,7 +2,7 @@
 	"extends": "./tsconfig.json",
 	"compilerOptions": {
 		"noUnusedParameters": true,
-		"noUnusedLocals": true,
+		"noUnusedLocals": true
 	},
 	"types": [
 		"jasmine",
