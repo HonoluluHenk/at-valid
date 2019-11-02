@@ -126,16 +126,12 @@ if (result.isError) {
 		}
 	}
 }
-
+// please note: there are no errors for optionalProperty since it is not required/optional
 ```
 
 
-
-
-
-FIXME: list/document available constraints
-
-Various constraints are found in the [decorators/constraints](src/decorators/constraints) folder.
+Various constraints are found in the [src/decorators/constraints](src/decorators/constraints) folder.
+Constraint names (for e.g. building error messages) are defined in [src/decorators/ValidatorNames.ts](src/decorators/ValidatorNames.ts).
 
 To see how you might implement your own decorators, see [Advanced Usage](#advanced-usage)
 
