@@ -16,7 +16,9 @@
 		"build": "check-engine package.json && tsc -p tsconfig.app.json",
 		"test:watch": "nodemon --watch src --watch tests --ext ts --exec 'jasmine-ts --config=jasmine.json'",
 		"test": "jasmine-ts --config=jasmine.json",
-		"test:coverage": "nyc  -r lcov -e .ts -x \"**/*.spec.ts\" jasmine-ts --config=jasmine.json"
+		"test:coverage": "nyc  -r lcov -e .ts -x \"**/*.spec.ts\" jasmine-ts --config=jasmine.json",
+		"prepare": "npm run build",
+		"prepublish": "npm run lint && npm run test"
 	},
 	"engines": {
 		"node": ">=12.13.0",
