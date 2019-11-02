@@ -2,25 +2,27 @@ import {testBuilder} from "../../../tests/test-builder.spec";
 import {IsNumber} from "./IsNumber";
 
 describe('IsNumber', () => {
-	class Fixture {
+	class TestClass {
 		@IsNumber()
-		public foo?: any;
+		public value: any;
 
-		constructor(foo?: any) {
-			this.foo = foo;
+		constructor(value: any) {
+			this.value = value;
 		}
 	}
 
-	class FixtureWithContext {
+	class TestClassWithContext {
 		@IsNumber({customContext: {should: "be passed to result"}})
-		public foo?: any;
+		public value: any;
 
-		constructor(foo?: any) {
-			this.foo = foo;
+		constructor(value: any) {
+			this.value = value;
 		}
 	}
 
 	const valids = [
+		undefined,
+		null,
 		0,
 		-0,
 		1,
@@ -50,15 +52,15 @@ describe('IsNumber', () => {
 
 	testBuilder(
 			"IsNumber",
-			"foo",
-			Fixture
+			"value",
+			TestClass
 	)
 			.build(valids, invalids);
 
 	testBuilder(
 			"IsNumber",
-			"foo",
-			FixtureWithContext
+			"value",
+			TestClassWithContext
 	)
-			.buildWithContext({should: "be passed to result"}, valids, invalids);
+			.buildWithContext("invalid", {should: "be passed to result"});
 });

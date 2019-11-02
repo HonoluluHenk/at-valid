@@ -1,4 +1,4 @@
-import {ValidatorNames} from '../src/annotations/ValidatorNames';
+import {ValidatorNames} from '../src/decorators/ValidatorNames';
 import {DecoratorValidator} from '../src/validator/DecoratorValidator';
 import {DEFAULT_GROUP, Opts, ValidationContext} from '../src/validator/ValidationContext';
 

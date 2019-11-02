@@ -1,36 +1,38 @@
 import {testBuilder} from "../../../tests/test-builder.spec";
+import {VERY_SMALL_NUMBER} from "../../../tests/test-constants.spec";
 import {Min} from "./Min";
 
 describe('Min', () => {
 	class TestClassMinInclusive {
 		@Min(5)
-		public value: number | null | undefined;
+		public value: any;
 
-		constructor(bar: any | null | undefined) {
-			this.value = bar;
+		constructor(value: any) {
+			this.value = value;
 		}
 	}
 
 	class TestClassMinExclusive {
 		@Min(5, false)
-		public value: number | null | undefined;
+		public value: any;
 
-		constructor(bar: any | null | undefined) {
-			this.value = bar;
+		constructor(value: any) {
+			this.value = value;
 		}
 	}
 
 	class TestClassWithContext {
 		@Min(5, true, {customContext: {should: "propagate to error"}})
-		public value?: number | null;
+		public value: any;
 
-		constructor(value: number | null | undefined) {
+		constructor(value: any) {
 			this.value = value;
 		}
 	}
 
-	// noinspection MagicNumberJS
 	const validsInclusive: any[] = [
+		undefined,
+		null,
 		5,
 		5.0001,
 		5 + Number.EPSILON,
@@ -40,15 +42,16 @@ describe('Min', () => {
 	];
 
 	const validsExclusive: any[] = [
+		undefined,
+		null,
 		//5:  this is the difference to Inclusive
 		5.0001,
-		5 + Number.EPSILON,
+		5 + VERY_SMALL_NUMBER,
 		Number.POSITIVE_INFINITY,
 		Number.MAX_SAFE_INTEGER,
 		Number.MAX_VALUE
 	];
 
-	// noinspection MagicNumberJS
 	const invalidsInclusive = [
 		"",
 		"1234",
@@ -59,7 +62,7 @@ describe('Min', () => {
 		4.99999999,
 		//  Note: (5 - EPSILON) or (5 - 2 * EPSILON) can not be represented and thus is rounded back up to 5
 		// ... and thus fails this test
-		5 - 3 * Number.EPSILON,
+		5 - VERY_SMALL_NUMBER,
 		NaN,
 		new Date(2019, 11, 31),
 		true,
@@ -80,9 +83,7 @@ describe('Min', () => {
 		-1,
 		4,
 		4.99999999,
-		//  Note: (5 - EPSILON) or (5 - 2 * EPSILON) can not be represented and thus is rounded back up to 5
-		// ... and thus fails this test
-		5 - 3 * Number.EPSILON,
+		5 - VERY_SMALL_NUMBER,
 		NaN,
 		new Date(2019, 11, 31),
 		true,
@@ -94,11 +95,17 @@ describe('Min', () => {
 		{min: 99},
 	];
 
-	testBuilder("Min", "value", TestClassMinInclusive, {min: 5, inclusive: true})
-			.build(validsInclusive, invalidsInclusive);
-	testBuilder("Min", "value", TestClassMinExclusive, {min: 5, inclusive: false})
-			.build(validsExclusive, invalidsExclusive);
-	testBuilder("Min", "value", TestClassWithContext, {min: 5, inclusive: true})
-			.buildWithContext({should: "propagate to error"}, validsInclusive, invalidsInclusive);
+	describe('range inclusive', () => {
+		testBuilder("Min", "value", TestClassMinInclusive, {min: 5, inclusive: true})
+				.build(validsInclusive, invalidsInclusive);
+	});
+	describe('range exclusive', () => {
+		testBuilder("Min", "value", TestClassMinExclusive, {min: 5, inclusive: false})
+				.build(validsExclusive, invalidsExclusive);
+	});
+	describe('customContext', () => {
+		testBuilder("Min", "value", TestClassWithContext, {min: 5, inclusive: true})
+				.buildWithContext("invalid", {should: "propagate to error"});
+	});
 
 });

@@ -135,7 +135,7 @@ if (result.isError) {
 
 FIXME: list/document available constraints
 
-Various constraints are found in the [annotations/constraints](src/annotations/constraints) folder.
+Various constraints are found in the [decorators/constraints](src/decorators/constraints) folder.
 
 To see how you might implement your own decorators, see [Advanced Usage](#AdvancedUsage)
 

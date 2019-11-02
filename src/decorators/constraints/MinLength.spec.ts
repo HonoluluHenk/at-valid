@@ -4,28 +4,29 @@ import {MinLength} from "./MinLength";
 describe('MinLength', () => {
 	class TestClass {
 		@MinLength(5)
-		public bar?: string | null;
+		public value: any;
 
-		constructor(bar: string | null | undefined) {
-			this.bar = bar;
+		constructor(value: any) {
+			this.value = value;
 		}
 	}
 
 	class TestClassWithContext {
 		@MinLength(5, {customContext: {should: "propagate to error"}})
-		public bar?: string | null;
+		public value: any;
 
-		constructor(bar: string | null | undefined) {
-			this.bar = bar;
+		constructor(value: any) {
+			this.value = value;
 		}
 	}
 
 	const valids = [
+		undefined,
+		null,
 		"12345",
 		"Hello World"
 	];
 
-	// noinspection MagicNumberJS
 	const invalids = [
 		"",
 		"1234",
@@ -40,9 +41,9 @@ describe('MinLength', () => {
 		Symbol(),
 	];
 
-	testBuilder("MinLength", "bar", TestClass, {min: 5})
+	testBuilder("MinLength", "value", TestClass, {min: 5})
 			.build(valids, invalids);
-	testBuilder("MinLength", "bar", TestClassWithContext, {min: 5})
-			.buildWithContext({should: "propagate to error"}, valids, invalids);
+	testBuilder("MinLength", "value", TestClassWithContext, {min: 5})
+			.buildWithContext("bad", {should: "propagate to error"});
 
 });

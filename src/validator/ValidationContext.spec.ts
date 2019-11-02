@@ -1,6 +1,6 @@
-import {Nested} from "../annotations/Nested";
-import {Required} from "../annotations/constraints/Required";
-import {DEFAULT_GROUP, ExecutionPlan, PropertyValidator, ValidationContext} from "./ValidationContext";
+import {Required} from "../decorators/constraints/Required";
+import {Nested} from "../decorators/Nested";
+import {DEFAULT_GROUP, ExecutionPlan, ValidationContext} from "./ValidationContext";
 
 describe('ValidationContext', () => {
 	describe('buildExecutionPlan', () => {
@@ -40,14 +40,14 @@ describe('ValidationContext', () => {
 										DEFAULT: {
 											targetInstance,
 											propertyValidators: {
-												bar: [new PropertyValidator(
-														'Nested',
-														'bar',
-														{},
-														'NESTED',
-														{args: {}, customContext: {}},
-														[DEFAULT_GROUP]
-												)]
+												bar: [{
+													name: 'Nested',
+													propertyKey: 'bar',
+													target: {},
+													validatorFn: 'NESTED',
+													validatorFnContext: {args: {}, customContext: {}},
+													groups: [DEFAULT_GROUP]
+												}]
 											}
 										}
 									}
@@ -67,14 +67,14 @@ describe('ValidationContext', () => {
 							DEFAULT: {
 								targetInstance,
 								propertyValidators: {
-									banana: [new PropertyValidator(
-											'Required',
-											'banana',
-											{},
-											jasmine.any(Function) as any,
-											{args: {}, customContext: {}},
-											[DEFAULT_GROUP]
-									)]
+									banana: [{
+										name: 'Required',
+										propertyKey: 'banana',
+										target: {},
+										validatorFn: jasmine.any(Function) as any,
+										validatorFnContext: {args: {}, customContext: {}},
+										groups: [DEFAULT_GROUP]
+									}]
 								}
 							}
 						}

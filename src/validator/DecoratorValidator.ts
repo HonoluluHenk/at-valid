@@ -116,8 +116,6 @@ async function executeValidator(
 		nestedHandler: (nestedTargetIntance: object, instancePath: string) => Promise<ValidationResult | undefined>
 ): Promise<ValidationError | undefined> {
 
-	const validatorFnContext = validator.cloneValidatorFnContext();
-
 	let success: boolean | PromiseLike<boolean>;
 	let childValidation: ValidationResult | undefined;
 
@@ -131,7 +129,7 @@ async function executeValidator(
 			success = true;
 		}
 	} else {
-		success = validator.validatorFn(value, validatorFnContext, targetInstance);
+		success = validator.validatorFn(value, validator.validatorFnContext, targetInstance);
 	}
 
 	let promise: Promise<boolean>;
@@ -145,7 +143,7 @@ async function executeValidator(
 	}
 
 	return promise
-			.then(ok => mapToValidationError(ok, value, validator, validatorFnContext, instancePath, childValidation));
+			.then(ok => mapToValidationError(ok, value, validator, validator.validatorFnContext, instancePath, childValidation));
 
 }
 

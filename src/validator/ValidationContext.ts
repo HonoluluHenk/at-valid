@@ -1,7 +1,7 @@
 /**
  * The default validation group.
  */
-import {ValidatorNames} from "../annotations/ValidatorNames";
+import {ValidatorNames} from "../decorators/ValidatorNames";
 import {distinct} from "../util/filters/distinct";
 
 export const DEFAULT_GROUP = "DEFAULT";
@@ -33,20 +33,13 @@ export interface ValidatorFnContext {
 /**
  * a normalized and validated view of {@link PropertyValidatorConfig}
  */
-export class PropertyValidator {
-	constructor(
-			public readonly name: string,
-			public readonly propertyKey: string,
-			public readonly target: object,
-			public readonly validatorFn: ValidatorFnLike<any>,
-			public readonly validatorFnContext: ValidatorFnContext,
-			public readonly groups: string[],
-	) {
-	}
-
-	public cloneValidatorFnContext(): ValidatorFnContext {
-		return JSON.parse(JSON.stringify(this.validatorFnContext));
-	}
+export interface PropertyValidator {
+	readonly name: string,
+	readonly propertyKey: string,
+	readonly target: object,
+	readonly validatorFn: ValidatorFnLike<any>,
+	readonly validatorFnContext: ValidatorFnContext,
+	readonly groups: string[],
 }
 
 export interface PropertyValidatorConfig<V> {
@@ -141,14 +134,14 @@ export class ValidationContext {
 
 		const opts = config.opts || {};
 
-		const validator = new PropertyValidator(
-				required(config.name, "name/class"),
-				required(config.propertyKey, "propertyKey"),
-				required(config.target, "target"),
-				required(config.validatorFn, "validatorFn"),
-				{args: (config.messageArgs || {}), customContext: opts.customContext || {}},
-				parseGroups(opts.groups),
-		);
+		const validator: PropertyValidator = {
+			name: required(config.name, "name/class"),
+			propertyKey: required(config.propertyKey, "propertyKey"),
+			target: required(config.target, "target"),
+			validatorFn: required(config.validatorFn, "validatorFn"),
+			validatorFnContext: {args: (config.messageArgs || {}), customContext: opts.customContext || {}},
+			groups: parseGroups(opts.groups),
+		};
 
 		if (typeof validator.propertyKey === 'symbol') {
 			throw Error(`Symbols not supported (target: ${validator.target}@${validator.propertyKey})`);
@@ -165,14 +158,14 @@ export class ValidationContext {
 		// *sigh*... cannot get the type of the nested property from the class definition,
 		// we have to wait for an actual instance (i.e.: until the execution plan is generated).
 
-		const validator = new PropertyValidator(
-				ValidatorNames.Nested,
-				required(config.propertyKey, "propertyKey"),
-				required(config.target, "target"),
-				'NESTED',
-				{args: {}, customContext: {}},
-				parseGroups(opts.groups),
-		);
+		const validator: PropertyValidator = {
+				name: ValidatorNames.Nested,
+				propertyKey: required(config.propertyKey, "propertyKey"),
+				target: required(config.target, "target"),
+				validatorFn: 'NESTED',
+				validatorFnContext: {args: {}, customContext: {}},
+				groups: parseGroups(opts.groups),
+		};
 
 		this.putValidator(validator);
 

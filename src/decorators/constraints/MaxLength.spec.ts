@@ -4,23 +4,25 @@ import {MaxLength} from './MaxLength';
 describe('MaxLength', () => {
 	class TestClass {
 		@MaxLength(5)
-		public bar?: string | null;
+		public value: any;
 
-		constructor(bar: string | null | undefined) {
-			this.bar = bar;
+		constructor(value: any) {
+			this.value = value;
 		}
 	}
 
 	class TestClassWithContext {
 		@MaxLength(5, {customContext: {should: "propagate to error"}})
-		public bar?: string | null;
+		public value: any;
 
-		constructor(bar: string | null | undefined) {
-			this.bar = bar;
+		constructor(value: any) {
+			this.value = value;
 		}
 	}
 
 	const valids = [
+		undefined,
+		null,
 		"",
 		"a",
 		"12345",
@@ -42,8 +44,8 @@ describe('MaxLength', () => {
 		Symbol(),
 	];
 
-	testBuilder("MaxLength", "bar", TestClass, {max: 5})
+	testBuilder("MaxLength", "value", TestClass, {max: 5})
 			.build(valids, invalids);
-	testBuilder("MaxLength", "bar", TestClassWithContext, {max: 5})
-			.buildWithContext({should: "propagate to error"}, valids, invalids);
+	testBuilder("MaxLength", "value", TestClassWithContext, {max: 5})
+			.buildWithContext("invalid", {should: "propagate to error"});
 });

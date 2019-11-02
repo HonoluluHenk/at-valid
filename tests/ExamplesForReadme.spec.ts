@@ -1,7 +1,7 @@
-import {IsNumber} from "../src/annotations/constraints/IsNumber";
-import {Min} from "../src/annotations/constraints/Min";
-import {MinLength} from "../src/annotations/constraints/MinLength";
-import {Required} from "../src/annotations/constraints/Required";
+import {IsNumber} from "../src/decorators/constraints/IsNumber";
+import {Min} from "../src/decorators/constraints/Min";
+import {MinLength} from "../src/decorators/constraints/MinLength";
+import {Required} from "../src/decorators/constraints/Required";
 import {DecoratorValidator} from "../src/validator/DecoratorValidator";
 
 /* tslint:disable:member-access */

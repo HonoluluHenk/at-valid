@@ -7,7 +7,7 @@ interface TestBuilder<T extends object> {
 	readonly propertyKey: string;
 	readonly ctor: new (value: any) => T;
 	readonly build: (valids: any[], invalids: any[]) => TestBuilder<T>;
-	readonly buildWithContext: (customContext: CustomContext, valids: any[], invalids: any[]) => TestBuilder<T>;
+	readonly buildWithContext: (invalidValue: any, customContext: CustomContext) => TestBuilder<T>;
 }
 
 /**
@@ -24,13 +24,13 @@ export function testBuilder<T extends object>(
 		validatorName,
 		propertyKey,
 		ctor,
-		build: (valids: T[], invalids: T[]) => {
+		build: (valids: any[], invalids: any[]) => {
 			build(validatorName, propertyKey, ctor, valids, invalids, expectedArgs, undefined);
 
 			return builder;
 		},
-		buildWithContext: (customContext: CustomContext, valids: T[], invalids: T[]) => {
-			build(validatorName, propertyKey, ctor, valids, invalids, expectedArgs, customContext);
+		buildWithContext: (invalidValue: any, customContext: CustomContext) => {
+			build(validatorName, propertyKey, ctor, [], [invalidValue], expectedArgs, customContext);
 
 			return builder;
 		}
@@ -48,26 +48,11 @@ function build<T extends object>(
 		args: object | undefined,
 		customContext: object | undefined,
 ): void {
-
-	describe('an empty value', () => {
-		const params = [
-			{fixture: new ctor(undefined)},
-			{fixture: new ctor(null)},
-		];
-
-		params.forEach(param => {
-			it(`should succeed: ${JSON.stringify(param.fixture)}`, async () => {
-				const actual = await new DecoratorValidator().validate(param.fixture);
-
-				expect(actual.isSuccess)
-						.toBe(true);
-			});
-		});
-	});
-
 	describe('valid values', () => {
-		valids.forEach(fixture => {
-			it(`should succeed: ${JSON.stringify(fixture)}`, async () => {
+		valids.forEach((value, idx) => {
+			it(`should succeed, #${idx}: ${JSON.stringify(value)}`, async () => {
+				const fixture = new ctor(value);
+
 				const actual = await new DecoratorValidator().validate(fixture);
 
 				expect(actual.isSuccess)
@@ -77,8 +62,8 @@ function build<T extends object>(
 	});
 
 	describe('invalid values', () => {
-		invalids.forEach(value => {
-			it(`should fail: ${JSON.stringify(value)}`, async () => {
+		invalids.forEach((value, idx) => {
+			it(`should fail, #${idx}: ${JSON.stringify(value)}`, async () => {
 				const fixture = new ctor(value);
 
 				const actual = await new DecoratorValidator().validate(fixture);

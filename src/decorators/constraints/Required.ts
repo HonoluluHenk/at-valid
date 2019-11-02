@@ -3,7 +3,7 @@ import {Opts, ValidationContext} from "../../validator/ValidationContext";
 import {ValidatorNames} from '../ValidatorNames';
 
 /**
- * The inverse of <a href="https://validatejs.org/#utilities-is-empty">validate.js docs for isEmpty</a>.
+ * The value must not be null or undefined.
  */
 export function Required(opts?: Opts): any {
 	return (target: object, propertyKey: string) => {

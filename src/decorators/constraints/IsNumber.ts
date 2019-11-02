@@ -4,8 +4,7 @@ import {ValidatorNames} from "../ValidatorNames";
 
 export function IsNumber(opts?: Opts): any {
 	function isValid(value: any): boolean {
-		return isEmpty(value)
-				|| typeof value === 'number' && !isNaN(value);
+		return isEmpty(value) || typeof value === 'number' && !isNaN(value);
 	}
 
 	return (target: object, propertyKey: string) => {
