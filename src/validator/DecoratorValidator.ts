@@ -1,154 +1,159 @@
 import {toObject} from '../util/reducers/toObject';
-import {DEFAULT_GROUP, PropertyValidator, ValidationContext, ValidatorFnContext} from "./ValidationContext";
-import {ValidationError, ValidationResult} from "./ValidationResult";
+import {DEFAULT_GROUP, PropertyValidator, ValidationContext, ValidatorFnContext} from './ValidationContext';
+import {ValidationError, ValidationResult} from './ValidationResult';
 
 export interface ValidateParams {
-	groups?: string[];
+    groups?: string[];
 }
 
 export class DecoratorValidator {
 
-	/**
-	 * Execution ordering:
-	 * iterate over groups
-	 * for each group: iterate over targetInstance propertyValidators
-	 * for each property inside group: executeValidator each validator
-	 * for current group: if no property validation error occured: executeValidator each class-validator
-	 *
-	 * @param targetInstance the object instance to executeValidator the validations on.
-	 * @param params Configure validation behavior
-	 */
-	public async validate(targetInstance: object, params?: ValidateParams): Promise<ValidationResult> {
-		const validParams = parseParams(params);
+    /**
+     * Execution ordering:
+     * iterate over groups
+     * for each group: iterate over targetInstance propertyValidators
+     * for each property inside group: executeValidator each validator
+     * for current group: if no property validation error occured: executeValidator each class-validator
+     *
+     * @param targetInstance the object instance to executeValidator the validations on.
+     * @param params Configure validation behavior
+     */
+    public async validate(targetInstance: object, params?: ValidateParams): Promise<ValidationResult> {
+        const validParams = parseParams(params);
 
-		return validateImpl(targetInstance, validParams, "$");
-	}
+        return validateImpl(targetInstance, validParams, '$');
+    }
 
 }
 
-async function validateImpl(targetInstance: object, params: Required<ValidateParams>, instancePath: string): Promise<ValidationResult> {
-	const groupPlans = ValidationContext.instance.buildExecutionPlan(targetInstance, params.groups);
+async function validateImpl(
+    targetInstance: object,
+    params: Required<ValidateParams>,
+    instancePath: string
+): Promise<ValidationResult> {
+    const groupPlans = ValidationContext.instance.buildExecutionPlan(targetInstance, params.groups);
 
-	for (const group of Object.keys(groupPlans.groups)) {
-		const groupPlan = groupPlans.groups[group];
-		const validatorPromises: Array<Promise<ValidationError | undefined>> = Object.keys(groupPlan.propertyValidators)
-				.map(
-						propertyKey => runValidators(
-								groupPlan.targetInstance,
-								groupPlan.propertyValidators[propertyKey],
-								instancePath,
-								(nestedTargetIntance, nestedPath) => validateImpl(nestedTargetIntance, params, nestedPath)
-						));
+    for (const group of Object.keys(groupPlans.groups)) {
+        const groupPlan = groupPlans.groups[group];
+        const validatorPromises: Array<Promise<ValidationError | undefined>> = Object.keys(groupPlan.propertyValidators)
+            .map(
+                propertyKey => runValidators(
+                    groupPlan.targetInstance,
+                    groupPlan.propertyValidators[propertyKey],
+                    instancePath,
+                    (nestedTargetIntance, nestedPath) => validateImpl(nestedTargetIntance, params, nestedPath)
+                ));
 
-		const validationResult = await Promise.all(validatorPromises)
-				.then(groupResults => groupResults.filter(x => !!x) as ValidationError[])
-				.then((groupResults: ValidationError[]) =>
-						ValidationResult.create(groupResults.reduce(toObject(x => x!.propertyKey), {}), undefined)
-				);
+        const validationResult = await Promise.all(validatorPromises)
+            .then(groupResults => groupResults.filter(x => !!x) as ValidationError[])
+            .then((groupResults: ValidationError[]) =>
+                ValidationResult.create(groupResults.reduce(toObject(x => x!.propertyKey), {}), undefined)
+            );
 
-		if (validationResult.isError) {
-			return Promise.resolve(validationResult);
-		}
-	}
+        if (validationResult.isError) {
+            return Promise.resolve(validationResult);
+        }
+    }
 
-	return Promise.resolve(ValidationResult.success());
+    return Promise.resolve(ValidationResult.success());
 
 }
 
 function appendPath(parentPath: string, childPath: string) {
-	return [parentPath, childPath].join(".");
+    return [parentPath, childPath].join('.');
 }
 
 function mapToValidationError(
-		ok: boolean,
-		value: any,
-		validator: PropertyValidator,
-		validatorFnContext: ValidatorFnContext,
-		instancePath: string,
-		childValidation: ValidationResult | undefined
+    ok: boolean,
+    value: any,
+    validator: PropertyValidator,
+    validatorFnContext: ValidatorFnContext,
+    instancePath: string,
+    childValidation: ValidationResult | undefined
 ): ValidationError | undefined {
-	if (ok) {
-		return undefined;
-	}
+    if (ok) {
+        return undefined;
+    }
 
-	const path = appendPath(instancePath, validator.propertyKey);
+    const path = appendPath(instancePath, validator.propertyKey);
 
-	const result : ValidationError = {
-		propertyKey: validator.propertyKey,
-		value,
-		path,
-		validatorName: validator.name,
-		validatorFnContext
-	};
+    const result: ValidationError = {
+        propertyKey: validator.propertyKey,
+        value,
+        path,
+        validatorName: validator.name,
+        validatorFnContext
+    };
 
-	// is there a prettier way of having this attribute added only if it's != undefined
-	// instead of having it allways added with the undefined value?
-	if (childValidation) {
-		return {
-			...result,
-			childValidation
-		}
-	}
+    // is there a prettier way of having this attribute added only if it's != undefined
+    // instead of having it allways added with the undefined value?
+    if (childValidation) {
+        return {
+            ...result,
+            childValidation
+        };
+    }
 
-	return result;
+    return result;
 }
 
 async function runValidators(
-		targetInstance: object,
-		validators: PropertyValidator[],
-		instancePath: string,
-		nestedHandler: (nestedTargetIntance: object, instancePath: string) => Promise<ValidationResult | undefined>
+    targetInstance: object,
+    validators: PropertyValidator[],
+    instancePath: string,
+    nestedHandler: (nestedTargetIntance: object, instancePath: string) => Promise<ValidationResult | undefined>
 ): Promise<ValidationError | undefined> {
-	for (const rcv of validators.values()) {
-		const err = await executeValidator(targetInstance, rcv, instancePath, nestedHandler);
-		if (err) {
-			return Promise.resolve(err);
-		}
-	}
+    for (const rcv of validators.values()) {
+        const err = await executeValidator(targetInstance, rcv, instancePath, nestedHandler);
+        if (err) {
+            return Promise.resolve(err);
+        }
+    }
 
-	return Promise.resolve(undefined);
+    return Promise.resolve(undefined);
 }
 
 async function executeValidator(
-		targetInstance: object,
-		validator: PropertyValidator,
-		instancePath: string,
-		nestedHandler: (nestedTargetIntance: object, instancePath: string) => Promise<ValidationResult | undefined>
+    targetInstance: object,
+    validator: PropertyValidator,
+    instancePath: string,
+    nestedHandler: (nestedTargetIntance: object, instancePath: string) => Promise<ValidationResult | undefined>
 ): Promise<ValidationError | undefined> {
 
-	let success: boolean | PromiseLike<boolean>;
-	let childValidation: ValidationResult | undefined;
+    let success: boolean | PromiseLike<boolean>;
+    let childValidation: ValidationResult | undefined;
 
-	const value: any = (targetInstance as any)[validator.propertyKey];
-	if (validator.validatorFn === "NESTED") {
-		const nestedTarget = value;
-		if (nestedTarget) {
-			childValidation = await nestedHandler(nestedTarget, appendPath(instancePath, validator.propertyKey));
-			success = !!childValidation && childValidation.isSuccess;
-		} else {
-			success = true;
-		}
-	} else {
-		success = validator.validatorFn(value, validator.validatorFnContext, targetInstance);
-	}
+    const value: any = (targetInstance as any)[validator.propertyKey];
+    if (validator.validatorFn === 'NESTED') {
+        const nestedTarget = value;
+        if (nestedTarget) {
+            childValidation = await nestedHandler(nestedTarget, appendPath(instancePath, validator.propertyKey));
+            success = !!childValidation && childValidation.isSuccess;
+        } else {
+            success = true;
+        }
+    } else {
+        success = validator.validatorFn(value, validator.validatorFnContext, targetInstance);
+    }
 
-	let promise: Promise<boolean>;
+    let promise: Promise<boolean>;
 
-	if (typeof success === 'boolean') {
-		promise = Promise.resolve(success);
-	} else if (success instanceof Promise) {
-		promise = success;
-	} else {
-		throw Error("unsupported validator function result: " + typeof success + ", value: " + JSON.stringify(success));
-	}
+    if (typeof success === 'boolean') {
+        promise = Promise.resolve(success);
+    } else if (success instanceof Promise) {
+        promise = success;
+    } else {
+        throw Error('unsupported validator function result: ' + typeof success + ', value: ' + JSON.stringify(success));
+    }
 
-	return promise
-			.then(ok => mapToValidationError(ok, value, validator, validator.validatorFnContext, instancePath, childValidation));
+    return promise
+        .then(ok =>
+            mapToValidationError(ok, value, validator, validator.validatorFnContext, instancePath, childValidation));
 
 }
 
 function parseParams(params: ValidateParams | undefined): Required<ValidateParams> {
-	return {
-		groups: (params || {}).groups || [DEFAULT_GROUP]
-	};
+    return {
+        groups: (params || {}).groups || [DEFAULT_GROUP]
+    };
 }

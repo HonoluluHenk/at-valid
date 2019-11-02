@@ -7,15 +7,16 @@
  */
 import {isEmpty} from '../isEmpty';
 
-export function toObject<V>(keyExtractor: (v: V) => string | null | undefined): (acc: any, next: V) => {[key: string]: V} {
-	return (acc: any, next: V) => {
-		const key = keyExtractor(next);
-		if (isEmpty(key)) {
-			return acc;
-		}
+export function toObject<V>(keyExtractor: (v: V) => string | null | undefined): (acc: any,
+                                                                                 next: V) => { [key: string]: V } {
+    return (acc: any, next: V) => {
+        const key = keyExtractor(next);
+        if (isEmpty(key)) {
+            return acc;
+        }
 
-		acc[key] = next;
+        acc[key] = next;
 
-		return acc;
-	}
+        return acc;
+    };
 }

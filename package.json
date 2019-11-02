@@ -4,7 +4,7 @@
 	"description": "Validate objects by assigning decorators/annotations to properties.",
 	"main": "index.js",
 	"scripts": {
-		"format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+		"format": "echo FIXME",
 		"lint": "npm run lint:tsc && npm run lint:tsc:spec",
 		"lint:tsc": "tslint -p tsconfig.app.json",
 		"lint:tsc:spec": "tslint -p tsconfig.spec.json",
@@ -40,11 +40,9 @@
 		"jasmine-ts": "^0.3.0",
 		"nodemon": "^1.19.4",
 		"nyc": "^14.1.1",
-		"prettier": "^1.18.2",
 		"reflect-metadata": "^0.1.13",
 		"ts-node": "^8.4.1",
 		"tslint": "^5.20.0",
-		"tslint-config-prettier": "^1.18.0",
 		"typescript": "^3.6.4"
 	},
 	"dependencies": {}

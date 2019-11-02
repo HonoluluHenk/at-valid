@@ -1,52 +1,52 @@
-import {testBuilder} from "../../../tests/test-builder.spec";
-import {IsArray} from "./IsArray";
+import {testBuilder} from '../../../tests/test-builder.spec';
+import {IsArray} from './IsArray';
 
 describe('IsArray', () => {
-	class TestClass {
-		@IsArray()
-		public value: any;
+    class TestClass {
+        @IsArray()
+        public value: any;
 
-		constructor(value: any) {
-			this.value = value;
-		}
-	}
+        constructor(value: any) {
+            this.value = value;
+        }
+    }
 
-	class TestClassWithContext {
-		@IsArray({customContext: {should: "propagate to error"}})
-		public value: any;
+    class TestClassWithContext {
+        @IsArray({customContext: {should: 'propagate to error'}})
+        public value: any;
 
-		constructor(value: any) {
-			this.value = value;
-		}
-	}
+        constructor(value: any) {
+            this.value = value;
+        }
+    }
 
-	const valids = [
-		null,
-		undefined,
-		[],
-		[1, 2, 3],
-		["asdf", "fdsa"],
-		[{}],
-	];
+    const valids = [
+        null,
+        undefined,
+        [],
+        [1, 2, 3],
+        ['asdf', 'fdsa'],
+        [{}],
+    ];
 
-	const invalids = [
-		"",
-		"Hello World",
-		0,
-		1,
-		NaN,
-		{},
-		new Date(),
-	];
+    const invalids = [
+        '',
+        'Hello World',
+        0,
+        1,
+        NaN,
+        {},
+        new Date(),
+    ];
 
-	describe('without context', () => {
-		testBuilder('IsArray', 'value', TestClass)
-				.build(valids, invalids);
-	});
+    describe('without context', () => {
+        testBuilder('IsArray', 'value', TestClass)
+            .build(valids, invalids);
+    });
 
-	describe('with context', () => {
-		testBuilder('IsArray', 'value', TestClassWithContext)
-				.buildWithContext("invalid", {should: "propagate to error"});
-	});
+    describe('with context', () => {
+        testBuilder('IsArray', 'value', TestClassWithContext)
+            .buildWithContext('invalid', {should: 'propagate to error'});
+    });
 
 });

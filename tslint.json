@@ -1,11 +1,19 @@
 {
 	"extends": [
-		"tslint:recommended",
-		"tslint-config-prettier"
+		"tslint:recommended"
 	],
 	"rules": {
+		"arrow-parens": [
+			true,
+			"ban-single-arg-parens"
+		],
 		"comment-format": [
 			false
+		],
+		"indent": [
+			true,
+			"spaces",
+			4
 		],
 		"interface-name": [
 			true,
@@ -19,6 +27,28 @@
 			true
 		],
 		"object-literal-sort-keys": false,
+		"quotemark": [
+			true,
+			"single",
+			"avoid-escape"
+		],
+		"semicolon": [
+			true,
+			"always"
+		],
+		"trailing-comma": [
+			true,
+			{
+				"multiline": {
+					"objects": "never",
+					"arrays": "always",
+					"functions": "never",
+					"typeLiterals": "ignore"
+				},
+				"singleline": "never",
+				"esSpecCompliant": true
+			}
+		],
 		"variable-name": {
 			"options": [
 				"allow-leading-underscore",
