@@ -4,7 +4,9 @@ import {Opts, ValidationContext} from '../../validator/ValidationContext';
 import {ValidatorNames} from '../ValidatorNames';
 
 /**
- * The value must be an array, see {@link Array#isArray}.
+ * The value must be valid UUID.
+ *
+ * See <a href="https://www.npmjs.com/package/uuid-validate">uuid-validate</a> for details.
  */
 export function IsUUID(
     version: number = 4,
