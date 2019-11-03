@@ -5,12 +5,12 @@ describe('IsEnum', () => {
 
     enum IndexedEnum {
         foo,
-        bar,
+        bar
     }
 
     enum StringEnum {
         hello = 'hello',
-        kitty = 'kitty',
+        kitty = 'kitty'
     }
 
     const invalidTypes = [

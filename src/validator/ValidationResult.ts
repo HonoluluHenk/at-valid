@@ -1,4 +1,4 @@
-import {hasProperties} from "../util/hasProperties";
+import {hasProperties} from '../util/hasProperties';
 import {ValidatorFnContext} from './ValidationContext';
 
 export interface ValidationError {
