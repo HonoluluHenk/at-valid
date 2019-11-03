@@ -1,6 +1,6 @@
 {
 	"name": "at-valid",
-	"version": "1.1.0",
+	"version": "1.1.1-0",
 	"description": "Validate objects by assigning decorators/annotations to properties.",
 	"main": "lib/index.js",
 	"types": "lib/index.d.ts",
