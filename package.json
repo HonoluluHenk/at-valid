@@ -15,9 +15,8 @@
 		"lint:tsc:spec": "tslint -p tsconfig.spec.json",
 		"lint:fix": "tslint -p tsconfig.spec.json --fix && tslint -p tsconfig.app.json --fix",
 		"build": "check-engine package.json && npm run clean && tsc -p tsconfig.app.json",
-		"test:watch": "nodemon --watch src --watch tests --ext ts --exec 'jasmine-ts --config=jasmine.json'",
-		"test": "jasmine-ts --config=jasmine.json",
-		"test:coverage": "nyc  -r lcov -e .ts -x \"**/*.spec.ts\" jasmine-ts --config=jasmine.json",
+		"test:watch": "nodemon --watch src --ext ts --exec 'jasmine-ts --config=jasmine.json'",
+		"test": "nyc  -r lcov -e .ts -x '**/*.spec.ts' jasmine-ts --config=jasmine.json",
 		"prepare": "npm run build",
 		"prepublishOnly": "npm run lint && npm run test",
 		"clean": "rimraf lib coverage .nyc_output"

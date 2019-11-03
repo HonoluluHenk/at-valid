@@ -1,15 +1,11 @@
 {
 	"extends": "./tsconfig.json",
-	"compilerOptions": {
-		"noUnusedParameters": true,
-		"noUnusedLocals": true
-	},
 	"types": [
 		"jasmine",
 		"node"
 	],
 	"files": [
-		"src/test.ts"
+        "src/tests/test.ts"
 	],
 	"include": [
 		"src/**/*.spec.ts",

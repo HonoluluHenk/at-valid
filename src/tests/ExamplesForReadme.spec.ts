@@ -1,8 +1,8 @@
-import {IsNumber} from "../src/decorators/constraints/IsNumber";
-import {Min} from "../src/decorators/constraints/Min";
-import {MinLength} from "../src/decorators/constraints/MinLength";
-import {Required} from "../src/decorators/constraints/Required";
-import {DecoratorValidator} from "../src/validator/DecoratorValidator";
+import {IsNumber} from '../app/decorators/constraints/IsNumber';
+import {Min} from '../app/decorators/constraints/Min';
+import {MinLength} from '../app/decorators/constraints/MinLength';
+import {Required} from '../app/decorators/constraints/Required';
+import {DecoratorValidator} from '../app/validator/DecoratorValidator';
 
 /* tslint:disable:member-access */
 describe('ExamplesForReadme', () => {
@@ -33,13 +33,13 @@ describe('ExamplesForReadme', () => {
             expect(JSON.parse(JSON.stringify(actual)))
                 .toEqual(
                     {
-                        "success": false,
-                        "propertyErrors": {
-                            "someValueFromAPI": {
-                                "propertyKey": "someValueFromAPI",
-                                "path": "$.someValueFromAPI",
-                                "validatorName": "Required",
-                                "validatorFnContext": {"args": {}, "customContext": {}}
+                        success: false,
+                        propertyErrors: {
+                            someValueFromAPI: {
+                                propertyKey: 'someValueFromAPI',
+                                path: '$.someValueFromAPI',
+                                validatorName: 'Required',
+                                validatorFnContext: {args: {}, customContext: {}}
                             }
                         }
                     }

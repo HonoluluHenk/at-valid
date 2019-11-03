@@ -26,6 +26,13 @@
 		"newline-per-chained-call": [
 			true
 		],
+        "no-unused-variable": [
+            true,
+            "check-parameters",
+            {
+                "ignore-pattern": "^ignore"
+            }
+        ],
 		"object-literal-sort-keys": false,
 		"quotemark": [
 			true,

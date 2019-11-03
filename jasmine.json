@@ -1,11 +1,7 @@
 {
-	"helpers": [
-		"tests/helpers.ts"
-	],
 	"spec_dir": "",
 	"spec_files": [
-		"src/**/*.spec.ts",
-		"tests/**/*.spec.ts"
+		"src/**/*.spec.ts"
 	],
 	"stopSpecOnExpectationFailure": false,
 	"random": true,
