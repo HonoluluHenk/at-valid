@@ -2,7 +2,17 @@ import {isEmpty} from '../../util/isEmpty';
 import {Opts, ValidationContext} from '../../validator/ValidationContext';
 import {ValidatorNames} from '../ValidatorNames';
 
-export function Min(min: number, inclusive: boolean = true, opts?: Opts) {
+/**
+ * The number value must be within lower limit.
+ * @param min the lower limit.
+ * @param inclusive Is the limit inclusive or exclusive?
+ */
+export function Min(
+    min: number,
+    inclusive: boolean = true,
+    opts?: Opts
+): (target: object, propertyKey: string) => void {
+
     function checkRange(value: number): boolean {
         if (inclusive) {
             return value >= min;

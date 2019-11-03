@@ -1,3 +1,4 @@
+import * as uuidValidate from 'uuid-validate';
 import {isEmpty} from '../../util/isEmpty';
 import {Opts, ValidationContext} from '../../validator/ValidationContext';
 import {ValidatorNames} from '../ValidatorNames';
@@ -5,16 +6,21 @@ import {ValidatorNames} from '../ValidatorNames';
 /**
  * The value must be an array, see {@link Array#isArray}.
  */
-export function IsArray(
+export function IsUUID(
+    version: number = 4,
     opts?: Opts
 ): (target: object, propertyKey: string) => void {
 
+    function isValid(value: string) {
+        return uuidValidate(value, version);
+    }
+
     return (target: object, propertyKey: string) => {
         ValidationContext.instance.registerPropertyValidator({
-            name: ValidatorNames.IsArray,
+            name: ValidatorNames.IsUUID,
             target,
             propertyKey,
-            validatorFn: value => isEmpty(value) || Array.isArray(value),
+            validatorFn: value => isEmpty(value) || (typeof value === 'string' && isValid(value)),
             opts
         });
     };

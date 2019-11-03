@@ -1,3 +1,4 @@
+import {hasProperties} from "../util/hasProperties";
 import {ValidatorFnContext} from './ValidationContext';
 
 export interface ValidationError {
@@ -13,6 +14,9 @@ export interface PropertyErrors {
     [property: string]: ValidationError;
 }
 
+/**
+ * The root-level error-result object for one object.
+ */
 export class ValidationResult {
 
     public get isSuccess(): boolean {
@@ -53,8 +57,4 @@ export class ValidationResult {
         this.success = !failure;
     }
 
-}
-
-function hasProperties(obj: object): boolean {
-    return Object.keys(obj).length > 0;
 }

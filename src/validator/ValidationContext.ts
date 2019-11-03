@@ -15,9 +15,13 @@ export interface CustomContext {
     [key: string]: any;
 }
 
+export interface CustomFailure {
+    args?: object;
+}
+
 export type ValidatorFn<V, T extends object = object> =
     (value: V | undefined | null, ctx: ValidatorFnContext, targetInstance: T)
-        => boolean | PromiseLike<boolean>;
+        => boolean | CustomFailure | PromiseLike<boolean | CustomFailure>;
 
 export type ValidatorFnLike<V, T extends object = object> = ValidatorFn<V, T> | 'NESTED';
 

@@ -3,9 +3,14 @@ import {Opts, ValidationContext} from '../../validator/ValidationContext';
 import {ValidatorNames} from '../ValidatorNames';
 
 /**
- * Can be used on anything with a &quot;length&quot; property (e.g.: strings and arrays)
+ * Enforce an upper bound of entries for arrays or string-length.
+ * Supports any object that has a numeric &quot;length&quot; property.
  */
-export function MaxLength(max: number, opts?: Opts): any {
+export function MaxLength(
+    max: number,
+    opts?: Opts
+): (target: object, propertyKey: string) => void {
+
     function checkRange(value: any): boolean {
         return value.length <= max;
     }

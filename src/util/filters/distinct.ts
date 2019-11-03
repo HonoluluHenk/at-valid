@@ -1,9 +1,10 @@
 /**
- * Array filter function.
- *
- * Only returns the first entry for a given key, including null and undefined.
+ * Array filter function: returns only the first entry for a given key, including null- and undefined-key.
  */
-export function distinct<V>(keyExtractor?: (v: V) => string | null | undefined): (next: V) => boolean {
+export function distinct<V>(
+    keyExtractor?: (v: V) => string | null | undefined
+): (next: V) => boolean {
+
     const existing: any[] = [];
 
     return (next: V) => {

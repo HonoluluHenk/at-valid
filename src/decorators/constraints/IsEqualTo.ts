@@ -3,18 +3,25 @@ import {Opts, ValidationContext} from '../../validator/ValidationContext';
 import {ValidatorNames} from '../ValidatorNames';
 
 /**
- * The value must be an array, see {@link Array#isArray}.
+ * The value must be equal (i.e.: ===) to the given value (any type supported).
  */
-export function IsArray(
+export function IsEqualTo(
+    reference: any,
     opts?: Opts
 ): (target: object, propertyKey: string) => void {
 
+    function isValid(value: any): boolean {
+
+        return isEmpty(value) || value === reference;
+    }
+
     return (target: object, propertyKey: string) => {
         ValidationContext.instance.registerPropertyValidator({
-            name: ValidatorNames.IsArray,
+            name: ValidatorNames.IsEqualTo,
             target,
             propertyKey,
-            validatorFn: value => isEmpty(value) || Array.isArray(value),
+            messageArgs: {reference},
+            validatorFn: value => isValid(value),
             opts
         });
     };

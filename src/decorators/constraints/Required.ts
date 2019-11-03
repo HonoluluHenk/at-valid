@@ -5,7 +5,10 @@ import {ValidatorNames} from '../ValidatorNames';
 /**
  * The value must not be null or undefined.
  */
-export function Required(opts?: Opts): any {
+export function Required(
+    opts?: Opts
+): (target: object, propertyKey: string) => void {
+
     return (target: object, propertyKey: string) => {
         ValidationContext.instance.registerPropertyValidator({
             name: ValidatorNames.Required,

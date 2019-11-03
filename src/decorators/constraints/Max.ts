@@ -2,7 +2,17 @@ import {isEmpty} from '../../util/isEmpty';
 import {Opts, ValidationContext} from '../../validator/ValidationContext';
 import {ValidatorNames} from '../ValidatorNames';
 
-export function Max(max: number, inclusive: boolean = true, opts?: Opts) {
+/**
+ * The number value must be within an upper limit.
+ * @param max the upper limit.
+ * @param inclusive Is the limit inclusive or exclusive?
+ */
+export function Max(
+    max: number,
+    inclusive: boolean = true,
+    opts?: Opts
+): (target: object, propertyKey: string) => void {
+
     function checkRange(value: number): boolean {
         if (inclusive) {
             return value <= max;

@@ -3,9 +3,14 @@ import {Opts, ValidationContext} from '../../validator/ValidationContext';
 import {ValidatorNames} from '../ValidatorNames';
 
 /**
- * Can be used on anything with a &quot;length&quot; property (e.g.: strings and arrays)
+ * Enforce lower bound of entries for arrays or string-length.
+ * Supports any object that has a numeric &quot;length&quot; property.
  */
-export function MinLength(min: number, opts?: Opts): any {
+export function MinLength(
+    min: number = 1,
+    opts?: Opts
+): (target: object, propertyKey: string) => void {
+
     function checkRange(value: any): boolean {
         return value.length >= min;
     }

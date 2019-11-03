@@ -1,6 +1,14 @@
 import {toObject} from '../util/reducers/toObject';
-import {DEFAULT_GROUP, PropertyValidator, ValidationContext, ValidatorFnContext} from './ValidationContext';
+import {
+    CustomFailure,
+    DEFAULT_GROUP,
+    PropertyValidator,
+    ValidationContext,
+    ValidatorFnContext
+} from './ValidationContext';
 import {ValidationError, ValidationResult} from './ValidationResult';
+
+type ValidationOutcome = boolean | CustomFailure;
 
 export interface ValidateParams {
     groups?: string[];
@@ -23,7 +31,6 @@ export class DecoratorValidator {
 
         return validateImpl(targetInstance, validParams, '$');
     }
-
 }
 
 async function validateImpl(
@@ -64,13 +71,25 @@ function appendPath(parentPath: string, childPath: string) {
 }
 
 function mapToValidationError(
-    ok: boolean,
+    outcome: ValidationOutcome,
     value: any,
     validator: PropertyValidator,
     validatorFnContext: ValidatorFnContext,
     instancePath: string,
     childValidation: ValidationResult | undefined
 ): ValidationError | undefined {
+
+    let ok: boolean;
+    let customFailure: CustomFailure = {args: undefined};
+
+    if (typeof outcome === 'boolean') {
+        ok = outcome;
+    } else {
+        // CustomFailure
+        ok = false;
+        customFailure = outcome;
+    }
+
     if (ok) {
         return undefined;
     }
@@ -82,7 +101,13 @@ function mapToValidationError(
         value,
         path,
         validatorName: validator.name,
-        validatorFnContext
+        validatorFnContext: {
+            customContext: validatorFnContext.customContext,
+            args: {
+                ...validatorFnContext.args,
+                ...customFailure.args
+            }
+        }
     };
 
     // is there a prettier way of having this attribute added only if it's != undefined
@@ -120,7 +145,7 @@ async function executeValidator(
     nestedHandler: (nestedTargetIntance: object, instancePath: string) => Promise<ValidationResult | undefined>
 ): Promise<ValidationError | undefined> {
 
-    let success: boolean | PromiseLike<boolean>;
+    let success: ValidationOutcome | PromiseLike<ValidationOutcome>;
     let childValidation: ValidationResult | undefined;
 
     const value: any = (targetInstance as any)[validator.propertyKey];
@@ -136,14 +161,12 @@ async function executeValidator(
         success = validator.validatorFn(value, validator.validatorFnContext, targetInstance);
     }
 
-    let promise: Promise<boolean>;
+    let promise: Promise<ValidationOutcome>;
 
-    if (typeof success === 'boolean') {
-        promise = Promise.resolve(success);
-    } else if (success instanceof Promise) {
+    if (success instanceof Promise) {
         promise = success;
     } else {
-        throw Error('unsupported validator function result: ' + typeof success + ', value: ' + JSON.stringify(success));
+        promise = Promise.resolve(success);
     }
 
     return promise

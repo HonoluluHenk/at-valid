@@ -3,22 +3,25 @@ import {Opts, ValidationContext} from '../../validator/ValidationContext';
 import {ValidatorNames} from '../ValidatorNames';
 
 /**
- * Same as {@link IsDate} but with all time components set to zero.
+ * Same as {@link IsDatetime} but with all time components set to zero.
  */
-export function IsDate(utc: boolean = false, opts?: Opts): any {
+export function IsDate(
+    utc: boolean = false,
+    opts?: Opts
+): (target: object, propertyKey: string) => void {
 
     function dateComponentsZero(value: Date) {
         if (utc) {
             return value.getUTCHours() === 0
-                    && value.getUTCMinutes() === 0
-                    && value.getUTCSeconds() === 0
-                    && value.getUTCMilliseconds() === 0;
+                && value.getUTCMinutes() === 0
+                && value.getUTCSeconds() === 0
+                && value.getUTCMilliseconds() === 0;
         }
 
         return value.getHours() === 0
-                && value.getMinutes() === 0
-                && value.getSeconds() === 0
-                && value.getMilliseconds() === 0;
+            && value.getMinutes() === 0
+            && value.getSeconds() === 0
+            && value.getMilliseconds() === 0;
     }
 
     function isValid(value: any): boolean {

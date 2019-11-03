@@ -39,7 +39,7 @@ This package is implemented with ES2015 (see [caniuse.com]([https://caniuse.com/
 
 ### Dependencies
 
-None (to keep the bundle size as small as possible)
+* [uuid-validator](https://www.npmjs.com/package/uuid-validate) (if you're using the [IsUUID()](src/decorators/constraints/IsUUID.ts) constraint)
 
 ### Installation
 

@@ -7,8 +7,10 @@
  */
 import {isEmpty} from '../isEmpty';
 
-export function toObject<V>(keyExtractor: (v: V) => string | null | undefined): (acc: any,
-                                                                                 next: V) => { [key: string]: V } {
+export function toObject<V>(
+    keyExtractor: (v: V) => string | null | undefined
+): (acc: any, next: V) => { [key: string]: V } {
+
     return (acc: any, next: V) => {
         const key = keyExtractor(next);
         if (isEmpty(key)) {
