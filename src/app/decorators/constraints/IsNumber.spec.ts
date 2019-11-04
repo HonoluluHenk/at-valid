@@ -4,7 +4,7 @@ import {IsNumber} from './IsNumber';
 describe('IsNumber', () => {
     class TestClass {
         @IsNumber()
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;
@@ -13,7 +13,7 @@ describe('IsNumber', () => {
 
     class TestClassWithContext {
         @IsNumber({customContext: {should: 'be passed to result'}})
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;

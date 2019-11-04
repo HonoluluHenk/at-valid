@@ -4,7 +4,7 @@ import {Required} from './Required';
 describe('Required', () => {
     class TestClass {
         @Required()
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;
@@ -13,7 +13,7 @@ describe('Required', () => {
 
     class TestClassWithContext {
         @Required({customContext: {should: 'propagate to error'}})
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;

@@ -13,7 +13,7 @@ describe('IsBefore', () => {
 
     class TestClassBeforeExclusive {
         @IsBefore(DEADLINE)
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;
@@ -22,7 +22,7 @@ describe('IsBefore', () => {
 
     class TestClassBeforeInclusive {
         @IsBefore(DEADLINE, true)
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;
@@ -31,7 +31,7 @@ describe('IsBefore', () => {
 
     class TestClassWithContext {
         @IsBefore(DEADLINE, undefined, {customContext: {should: 'be passed to result'}})
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;
@@ -127,7 +127,7 @@ describe('IsBefore', () => {
 
         class WithDateProvider {
             @IsBefore(dateProviderProxy)
-            public value: any;
+            value: any;
 
             constructor(value: any) {
                 this.value = value;

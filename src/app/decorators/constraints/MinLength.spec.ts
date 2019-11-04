@@ -4,7 +4,7 @@ import {MinLength} from './MinLength';
 describe('MinLength', () => {
     class TestClass {
         @MinLength(5)
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;
@@ -13,7 +13,7 @@ describe('MinLength', () => {
 
     class TestClassWithContext {
         @MinLength(5, {customContext: {should: 'propagate to error'}})
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;

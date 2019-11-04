@@ -37,7 +37,7 @@ describe('groups and ordering', () => {
             @GroupValidator('OneAndTwo', {groups: ['One', 'Two']})
             @GroupValidator('TwoAndOne', {groups: ['Two', 'One']})
             @GroupValidator('No Groups (should never executions)', {groups: []})
-            public readonly foo = 'ignored';
+            readonly foo = 'ignored';
         }
 
         const params = [
@@ -110,7 +110,7 @@ describe('groups and ordering', () => {
                     @GroupValidator('Two', {groups: 'Two'}, param.Two)
                     @GroupValidator('OneAndTwo', {groups: ['One', 'Two']}, param.OneAndTwo)
                     @GroupValidator('TwoAndOne', {groups: ['Two', 'One']}, param.TwoAndOne)
-                    public readonly foo = 'ignored';
+                    readonly foo = 'ignored';
                 }
 
                 it(`should execute only expected validators (${param.One}/${param.Two}/${param.OneAndTwo}/${param.TwoAndOne})`, async () => {

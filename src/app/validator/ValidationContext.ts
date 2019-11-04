@@ -114,11 +114,11 @@ export interface ExecutionPlan {
 
 export class ValidationContext {
 
-    public static get instance() {
+    static get instance() {
         return this._instance;
     }
 
-    public static readonly _instance: ValidationContext = new ValidationContext();
+    static readonly _instance: ValidationContext = new ValidationContext();
 
     /**
      * ClassOrName -&gt; (propertyName -&gt; Validation).
@@ -130,7 +130,7 @@ export class ValidationContext {
      */
     private readonly validatorsPerClass: Map<object, RuntimeValidatorConfigMap> = new Map();
 
-    public registerPropertyValidator<V>(
+    registerPropertyValidator<V>(
         config: PropertyValidatorConfig<V>
     ) {
         // console.log('registerPropertyValidatio called: ', config);
@@ -154,7 +154,7 @@ export class ValidationContext {
         this.putValidator(validator);
     }
 
-    public registerNested(config: NestedValidatorConfig): void {
+    registerNested(config: NestedValidatorConfig): void {
 
         const opts = config.opts || {};
 
@@ -174,11 +174,11 @@ export class ValidationContext {
 
     }
 
-    public getValidatorsForClass(object: object): RuntimeValidatorConfigMap {
+    getValidatorsForClass(object: object): RuntimeValidatorConfigMap {
         return this.validatorsPerClass.get(object.constructor) || {};
     }
 
-    public buildExecutionPlan(targetInstance: object, groups: string[]): ExecutionPlan {
+    buildExecutionPlan(targetInstance: object, groups: string[]): ExecutionPlan {
 
         const result: ExecutionPlan = {
             groups: {}

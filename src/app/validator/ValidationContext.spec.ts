@@ -6,7 +6,7 @@ describe('ValidationContext', () => {
     describe('buildExecutionPlan', () => {
         class Inner {
             @Required()
-            public banana?: string;
+            banana?: string;
 
             constructor(banana?: string) {
                 this.banana = banana;
@@ -15,7 +15,7 @@ describe('ValidationContext', () => {
 
         class Outer {
             @Nested()
-            public bar?: Inner;
+            bar?: Inner;
 
             constructor(bar?: Inner) {
                 this.bar = bar;

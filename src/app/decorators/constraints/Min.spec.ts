@@ -5,7 +5,7 @@ import {Min} from './Min';
 describe('Min', () => {
     class TestClassMinInclusive {
         @Min(5)
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;
@@ -14,7 +14,7 @@ describe('Min', () => {
 
     class TestClassMinExclusive {
         @Min(5, false)
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;
@@ -23,7 +23,7 @@ describe('Min', () => {
 
     class TestClassWithContext {
         @Min(5, true, {customContext: {should: 'propagate to error'}})
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;

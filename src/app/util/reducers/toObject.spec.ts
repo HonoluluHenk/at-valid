@@ -3,8 +3,8 @@ import {toObject} from './toObject';
 describe('toObject', () => {
     class Foo {
         constructor(
-            public readonly key: string | null | undefined,
-            public readonly value: string
+            readonly key: string | null | undefined,
+            readonly value: string
         ) {
         }
     }

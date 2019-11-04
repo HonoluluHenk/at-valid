@@ -4,7 +4,7 @@ import {IsUUID} from './IsUUID';
 describe('IsUUID', () => {
     class TestClassV4 {
         @IsUUID()
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;
@@ -13,7 +13,7 @@ describe('IsUUID', () => {
 
     class TestClassV1 {
         @IsUUID(1)
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;
@@ -22,7 +22,7 @@ describe('IsUUID', () => {
 
     class TestClassWithContext {
         @IsUUID(undefined, {customContext: {should: 'be passed to result'}})
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;

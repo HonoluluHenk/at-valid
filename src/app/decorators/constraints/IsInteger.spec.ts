@@ -4,7 +4,7 @@ import {IsInteger} from './IsInteger';
 describe('IsInteger', () => {
     class TestClass {
         @IsInteger()
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;
@@ -13,7 +13,7 @@ describe('IsInteger', () => {
 
     class TestClassWithContext {
         @IsInteger({customContext: {should: 'be passed to result'}})
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;

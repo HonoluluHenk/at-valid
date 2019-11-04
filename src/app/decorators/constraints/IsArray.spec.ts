@@ -4,7 +4,7 @@ import {IsArray} from './IsArray';
 describe('IsArray', () => {
     class TestClass {
         @IsArray()
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;
@@ -13,7 +13,7 @@ describe('IsArray', () => {
 
     class TestClassWithContext {
         @IsArray({customContext: {should: 'propagate to error'}})
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;

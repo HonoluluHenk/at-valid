@@ -4,7 +4,7 @@ import {IsDatetime} from './IsDatetime';
 describe('IsDatetime', () => {
     class TestClass {
         @IsDatetime()
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;
@@ -13,7 +13,7 @@ describe('IsDatetime', () => {
 
     class TestClassWithContext {
         @IsDatetime({customContext: {should: 'be passed to result'}})
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;

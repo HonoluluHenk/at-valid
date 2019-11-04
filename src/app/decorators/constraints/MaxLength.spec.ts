@@ -4,7 +4,7 @@ import {MaxLength} from './MaxLength';
 describe('MaxLength', () => {
     class TestClass {
         @MaxLength(5)
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;
@@ -13,7 +13,7 @@ describe('MaxLength', () => {
 
     class TestClassWithContext {
         @MaxLength(5, {customContext: {should: 'propagate to error'}})
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;

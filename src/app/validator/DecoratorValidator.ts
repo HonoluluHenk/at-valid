@@ -26,7 +26,7 @@ export class DecoratorValidator {
      * @param targetInstance the object instance to executeValidator the validations on.
      * @param params Configure validation behavior
      */
-    public async validate(targetInstance: object, params?: ValidateParams): Promise<ValidationResult> {
+    async validate(targetInstance: object, params?: ValidateParams): Promise<ValidationResult> {
         const validParams = parseParams(params);
 
         return validateImpl(targetInstance, validParams, '$');

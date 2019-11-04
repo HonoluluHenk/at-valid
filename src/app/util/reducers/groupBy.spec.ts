@@ -3,8 +3,8 @@ import {groupBy} from './groupBy';
 describe('groupBy', () => {
     class Foo {
         constructor(
-            public readonly key: string | null | undefined,
-            public readonly value: string
+            readonly key: string | null | undefined,
+            readonly value: string
         ) {
         }
     }

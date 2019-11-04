@@ -4,7 +4,7 @@ import {IsDate} from './IsDate';
 describe('IsDate', () => {
     class TestClass {
         @IsDate()
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;
@@ -13,7 +13,7 @@ describe('IsDate', () => {
 
     class TestClassUTC {
         @IsDate(true)
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;
@@ -22,7 +22,7 @@ describe('IsDate', () => {
 
     class TestClassWithContext {
         @IsDate(undefined, {customContext: {should: 'be passed to result'}})
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;

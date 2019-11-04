@@ -5,7 +5,7 @@ describe('Matches', () => {
 
     class TestClassWithStringPattern {
         @Matches('^Hello World$')
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;
@@ -14,7 +14,7 @@ describe('Matches', () => {
 
     class TestClassWithRegExp {
         @Matches(/^Hello World$/)
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;
@@ -23,7 +23,7 @@ describe('Matches', () => {
 
     class TestClassWithMessageArgs {
         @Matches(/^Hello World$/, {weSay: 'Woot!'})
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;
@@ -32,7 +32,7 @@ describe('Matches', () => {
 
     class TestClassWithContext {
         @Matches(/^Hello World$/, undefined, {customContext: {should: 'be passed to result'}})
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;

@@ -5,7 +5,7 @@ import {Max} from './Max';
 describe('Max', () => {
     class TestClassMaxInclusive {
         @Max(5)
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;
@@ -14,7 +14,7 @@ describe('Max', () => {
 
     class TestClassMaxExclusive {
         @Max(5, false)
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;
@@ -23,7 +23,7 @@ describe('Max', () => {
 
     class TestClassWithContext {
         @Max(5, true, {customContext: {should: 'propagate to error'}})
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;

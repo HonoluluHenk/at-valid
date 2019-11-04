@@ -4,7 +4,7 @@ import {IsString} from './IsString';
 describe('IsString', () => {
     class TestClass {
         @IsString()
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;
@@ -13,7 +13,7 @@ describe('IsString', () => {
 
     class TestClassWithContext {
         @IsString({customContext: {should: 'be passed to result'}})
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;

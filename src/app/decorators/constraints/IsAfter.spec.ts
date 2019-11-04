@@ -13,7 +13,7 @@ describe('IsAfter', () => {
 
     class TestClassBeforeExclusive {
         @IsAfter(DEADLINE)
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;
@@ -22,7 +22,7 @@ describe('IsAfter', () => {
 
     class TestClassBeforeInclusive {
         @IsAfter(DEADLINE, true)
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;
@@ -31,7 +31,7 @@ describe('IsAfter', () => {
 
     class TestClassWithContext {
         @IsAfter(DEADLINE, undefined, {customContext: {should: 'be passed to result'}})
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;
@@ -127,7 +127,7 @@ describe('IsAfter', () => {
 
         class WithDateProvider {
             @IsAfter(dateProviderProxy)
-            public value: any;
+            value: any;
 
             constructor(value: any) {
                 this.value = value;

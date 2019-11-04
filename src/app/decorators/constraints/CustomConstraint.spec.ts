@@ -22,7 +22,7 @@ describe(`CustomConstraint`, () => {
 
         class TestClass {
             @CustomConstraint('CustomConstraintTest', validationProxy)
-            public value: any;
+            value: any;
 
             constructor(value: any) {
                 this.value = value;
@@ -64,7 +64,7 @@ describe(`CustomConstraint`, () => {
 
         class TestClass {
             @CustomConstraint('CustomConstraintTest', validationProxy, {foo: 'bar'})
-            public value: any;
+            value: any;
 
             constructor(value: any) {
                 this.value = value;

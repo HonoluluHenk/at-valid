@@ -15,7 +15,7 @@ describe(`IsEqualTo`, () => {
         describe(`reference: ${typedValue.reference}`, () => {
             class TestClass {
                 @IsEqualTo(typedValue.reference)
-                public value: any;
+                value: any;
 
                 constructor(value: any) {
                     this.value = value;

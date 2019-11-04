@@ -47,7 +47,7 @@ describe('IsEnum', () => {
 
         class TestIndexedEnum {
             @IsEnum(IndexedEnum)
-            public value: any;
+            value: any;
 
             constructor(value: any) {
                 this.value = value;
@@ -67,7 +67,7 @@ describe('IsEnum', () => {
     describe('string enum', () => {
         class TestStringEnumEnum {
             @IsEnum(StringEnum)
-            public value: any;
+            value: any;
 
             constructor(value: any) {
                 this.value = value;
@@ -104,7 +104,7 @@ describe('IsEnum', () => {
     describe('passing context', () => {
         class TestClassWithContext {
             @IsEnum(StringEnum, {customContext: {should: 'be passed to result'}})
-            public value: any;
+            value: any;
 
             constructor(value: any) {
                 this.value = value;

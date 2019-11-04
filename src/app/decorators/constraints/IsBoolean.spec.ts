@@ -4,7 +4,7 @@ import {IsBoolean} from './IsBoolean';
 describe('IsBoolean', () => {
     class TestClass {
         @IsBoolean()
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;
@@ -13,7 +13,7 @@ describe('IsBoolean', () => {
 
     class TestClassWithContext {
         @IsBoolean({customContext: {should: 'be passed to result'}})
-        public value: any;
+        value: any;
 
         constructor(value: any) {
             this.value = value;
