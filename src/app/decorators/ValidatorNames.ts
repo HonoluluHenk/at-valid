@@ -20,6 +20,7 @@ export enum ValidatorNames {
     Matches = 'Matches',
     IsUUID = 'IsUUID',
     IsEqualTo = 'IsEqualTo',
+    IsIn = 'IsIn',
 
     // structural
     Nested = 'Nested'

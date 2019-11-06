@@ -16,7 +16,7 @@ export interface CustomContext {
 }
 
 export interface CustomFailure {
-    args?: object;
+    messageArgs?: object;
 }
 
 export type ValidatorFn<V, T extends object = object> =
@@ -51,25 +51,25 @@ export interface PropertyValidatorConfig<V> {
      * The name of this validator.
      * Most commonly this is the name of the annotation (e.g.: Required, MinLength, ...).
      */
-    name: string;
+    readonly name: string;
     /**
      * Which property is being validated.
      */
-    propertyKey: string;
+    readonly propertyKey: string;
     /**
      * The class where the property is located.
      */
-    target: object;
+    readonly target: object;
     /**
      * The actual function that does the validation.
      */
-    validatorFn: ValidatorFnLike<V>;
+    readonly validatorFn: ValidatorFnLike<V>;
     //FIXME: document
-    opts: Opts | undefined;
+    readonly opts: Opts | undefined;
     /**
      * If your validator function needs arguments (e.g.: the min-length of a string), provide them here.
      */
-    messageArgs?: object | undefined;
+    readonly messageArgs?: object;
 }
 
 export interface Opts {

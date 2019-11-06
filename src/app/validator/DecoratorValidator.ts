@@ -80,7 +80,7 @@ function mapToValidationError(
 ): ValidationError | undefined {
 
     let ok: boolean;
-    let customFailure: CustomFailure = {args: undefined};
+    let customFailure: CustomFailure = {messageArgs: undefined};
 
     if (typeof outcome === 'boolean') {
         ok = outcome;
@@ -105,7 +105,7 @@ function mapToValidationError(
             customContext: validatorFnContext.customContext,
             args: {
                 ...validatorFnContext.args,
-                ...customFailure.args
+                ...customFailure.messageArgs
             }
         }
     };

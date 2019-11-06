@@ -6,12 +6,16 @@ describe('ValidationResult', () => {
             const actual = ValidationResult.success();
 
             expect(actual.isSuccess)
+                .withContext('isSuccess')
                 .toEqual(true);
             expect(actual.isError)
+                .withContext('isError')
                 .toEqual(false);
             expect(actual.propertyErrors)
+                .withContext('propertyErrors')
                 .toEqual({});
             expect(actual.classError)
+                .withContext('classError')
                 .toBeUndefined();
         });
 

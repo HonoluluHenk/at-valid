@@ -34,23 +34,23 @@ describe(`IsEqualTo`, () => {
 
     });
 
-    // describe('passing context', () => {
-    //     class TestClassWithContext {
-    //         @IsEqualTo(StringEnum, {customContext: {should: 'be passed to result'}})
-    //         public value: any;
-    //
-    //         constructor(value: any) {
-    //             this.value = value;
-    //         }
-    //     }
-    //
-    //     testBuilder(
-    //         'IsEqualTo',
-    //         'value',
-    //         TestClassWithContext,
-    //         {enumClass: StringEnum}
-    //     )
-    //         .buildWithContext('invalid', {should: 'be passed to result'});
-    // });
+    describe('passing context', () => {
+        class TestClassWithContext {
+            @IsEqualTo('Some funny text', {customContext: {should: 'be passed to result'}})
+            value: any;
+
+            constructor(value: any) {
+                this.value = value;
+            }
+        }
+
+        testBuilder(
+            'IsEqualTo',
+            'value',
+            TestClassWithContext,
+            {reference: 'Some funny text'}
+        )
+            .buildWithContext('invalid', {should: 'be passed to result'});
+    });
 
 });

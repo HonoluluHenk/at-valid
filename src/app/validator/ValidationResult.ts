@@ -33,7 +33,7 @@ export class ValidationResult {
 
     static create(
         propertyErrors: PropertyErrors | undefined,
-        classError?: ValidationError | undefined
+        classError?: ValidationError
     ): ValidationResult {
         return new ValidationResult(propertyErrors, classError);
     }

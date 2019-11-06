@@ -36,7 +36,7 @@ export function IsBefore<T extends object>(
         }
 
         return {
-            args: {date: reference, inclusive}
+            messageArgs: {date: reference, inclusive}
         };
     }
 
