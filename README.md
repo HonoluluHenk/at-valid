@@ -223,7 +223,7 @@ await validate(new GroupTesting("Oranges"), {groups: ['FIRST', 'SECOND', 'THIRD'
 
 // ordering is important!
 await validate(new GroupTesting("Oranges"), {groups: ['THIRD', 'SECOND', 'FIRST']})
-// => failure (THIRD executed and failed, all others are skupped due to failure in THIRD)
+// => failure (THIRD executed and failed, all others are skipped due to failure in THIRD)
 
 // no groups!
 await validate(new GroupTesting("Foobar"), {groups: []})

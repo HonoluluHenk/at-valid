@@ -3,6 +3,7 @@
  */
 import {ValidatorNames} from '../decorators/ValidatorNames';
 import {distinct} from '../util/filters/distinct';
+import {isEmpty} from '../util/isEmpty';
 
 export const DEFAULT_GROUP = 'DEFAULT';
 
@@ -25,12 +26,12 @@ export type ValidatorFn<V, T extends object = object> =
 
 export type ValidatorFnLike<V, T extends object = object> = ValidatorFn<V, T> | 'NESTED';
 
-export interface RuntimeValidatorConfigMap {
+interface RuntimeValidatorConfigMap {
     [property: string]: PropertyValidator[];
 }
 
 export interface ValidatorFnContext {
-    readonly args: object;
+    readonly args: {[name: string]: any};
     readonly customContext: CustomContext;
 }
 
@@ -147,7 +148,9 @@ export class ValidationContext {
         };
 
         if (typeof validator.propertyKey === 'symbol') {
-            throw Error(`Symbols not supported (target: ${validator.target}@${validator.propertyKey})`);
+            const targetName = validator.target.constructor.name;
+            const symbolName = String(validator.propertyKey);
+            throw Error(`Symbols not supported (target: ${targetName}@${symbolName})`);
         }
 
         // console.debug('registering validator: ', validator);
@@ -170,12 +173,14 @@ export class ValidationContext {
             groups: parseGroups(opts.groups)
         };
 
+        if (typeof validator.propertyKey === 'symbol') {
+            const targetName = validator.target.constructor.name;
+            const symbolName = String(validator.propertyKey);
+            throw Error(`Symbols not supported (target: ${targetName}@${symbolName})`);
+        }
+
         this.putValidator(validator);
 
-    }
-
-    getValidatorsForClass(object: object): RuntimeValidatorConfigMap {
-        return this.validatorsPerClass.get(object.constructor) || {};
     }
 
     buildExecutionPlan(targetInstance: object, groups: string[]): ExecutionPlan {
@@ -186,7 +191,10 @@ export class ValidationContext {
 
         const executed: { [property: string]: PropertyValidator[] } = {};
 
-        const validatorsByProperty = ValidationContext.instance.getValidatorsForClass(targetInstance);
+        const validatorsByProperty = this.getValidatorsForClass(targetInstance);
+        if (isEmpty(validatorsByProperty)) {
+            throw new Error(`class not registered: ${targetInstance.constructor.name}`);
+        }
 
         for (const group of groups) {
             const groupPlan: GroupPlan = {
@@ -214,6 +222,10 @@ export class ValidationContext {
         return result;
     }
 
+    private getValidatorsForClass(object: object): RuntimeValidatorConfigMap | undefined {
+        return this.validatorsPerClass.get(object.constructor);
+    }
+
     private putValidator(validator: PropertyValidator): void {
         const allForClass = this.validatorsPerClass.get(validator.target.constructor) || {};
         let allForProp = allForClass[validator.propertyKey] || [];
@@ -234,8 +246,8 @@ function validatorInGroup(validator: PropertyValidator, group: string): boolean 
 }
 
 function required<T>(value: T | null | undefined, description: string): T {
-    if (value === null || value === undefined) {
-        throw Error(`${description} required`);
+    if (value === null || value === undefined || !value) {
+        throw new Error(`${description} required`);
     }
 
     return value;

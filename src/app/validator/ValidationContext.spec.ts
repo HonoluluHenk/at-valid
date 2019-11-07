@@ -1,9 +1,88 @@
 import {CustomConstraint} from '../decorators/constraints/CustomConstraint';
 import {Required} from '../decorators/constraints/Required';
 import {Nested} from '../decorators/Nested';
-import {DEFAULT_GROUP, ExecutionPlan, ValidationContext} from './ValidationContext';
+import {
+    DEFAULT_GROUP,
+    ExecutionPlan,
+    NestedValidatorConfig,
+    PropertyValidatorConfig,
+    ValidationContext
+} from './ValidationContext';
 
 describe('ValidationContext', () => {
+    describe('registerPropertyValidator input validation', () => {
+        function makeConfig(overrides: Partial<PropertyValidatorConfig<object>>): PropertyValidatorConfig<object> {
+            return {
+                name: 'name',
+                propertyKey: 'propertyKey',
+                messageArgs: {},
+                target: {},
+                validatorFn: () => true,
+                opts: {},
+                ...overrides
+            };
+        }
+
+        const params = [
+            {desc: 'name', override: {name: undefined}, expected: 'name/class required'},
+            {desc: 'name', override: {name: null}, expected: 'name/class required'},
+            {desc: 'name', override: {name: ''}, expected: 'name/class required'},
+            {desc: 'propertyKey', override: {propertyKey: undefined}, expected: 'propertyKey required'},
+            {desc: 'propertyKey', override: {propertyKey: null}, expected: 'propertyKey required'},
+            {desc: 'propertyKey', override: {propertyKey: ''}, expected: 'propertyKey required'},
+            {
+                desc: 'propertyKey/Symbol', override: {propertyKey: Symbol()},
+                expected: 'Symbols not supported (target:' + ' Object@Symbol())'
+            },
+            {desc: 'target', override: {target: null}, expected: 'target required'},
+            {desc: 'target', override: {target: undefined}, expected: 'target required'},
+            {desc: 'validatorFn', override: {validatorFn: undefined}, expected: 'validatorFn required'},
+            {desc: 'validatorFn', override: {validatorFn: undefined}, expected: 'validatorFn required'},
+        ];
+
+        params.forEach(param => {
+            it(`should validate ${param.desc}: ${JSON.stringify(param.override)}`, () => {
+                const config = makeConfig(param.override as any);
+
+                expect(() => ValidationContext.instance.registerPropertyValidator(config))
+                    .toThrowError(param.expected);
+            });
+        });
+    });
+
+    describe('registerNested input validation', () => {
+        function makeConfig(overrides: Partial<NestedValidatorConfig>): NestedValidatorConfig {
+            return {
+                name: 'name',
+                propertyKey: 'propertyKey',
+                target: {},
+                opts: {},
+                ...overrides
+            };
+        }
+
+        const params = [
+            {desc: 'propertyKey', override: {propertyKey: undefined}, expected: 'propertyKey required'},
+            {desc: 'propertyKey', override: {propertyKey: null}, expected: 'propertyKey required'},
+            {desc: 'propertyKey', override: {propertyKey: ''}, expected: 'propertyKey required'},
+            {
+                desc: 'propertyKey/Symbol', override: {propertyKey: Symbol()},
+                expected: 'Symbols not supported (target:' + ' Object@Symbol())'
+            },
+            {desc: 'target', override: {target: null}, expected: 'target required'},
+            {desc: 'target', override: {target: undefined}, expected: 'target required'},
+        ];
+
+        params.forEach(param => {
+            it(`should validate ${param.desc}: ${JSON.stringify(param.override)}`, () => {
+                const config = makeConfig(param.override as any);
+
+                expect(() => ValidationContext.instance.registerNested(config))
+                    .toThrowError(param.expected);
+            });
+        });
+    });
+
     describe('buildExecutionPlan', () => {
         class Inner {
             @Required()
@@ -22,6 +101,13 @@ describe('ValidationContext', () => {
                 this.bar = bar;
             }
         }
+
+        describe('class not registered', () => {
+           it('should fail', () => {
+               expect(() => ValidationContext.instance.buildExecutionPlan({}, []))
+                   .toThrowError('class not registered: Object');
+           }) ;
+        });
 
         describe('nesting is not part of the execution plan', () => {
             const params = [

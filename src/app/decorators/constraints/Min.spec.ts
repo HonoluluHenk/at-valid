@@ -1,6 +1,8 @@
 import {testBuilder} from '../../../tests/test-builder.spec';
 import {VERY_SMALL_NUMBER} from '../../../tests/test-constants.spec';
+import {DecoratorValidator} from '../../validator/DecoratorValidator';
 import {Min} from './Min';
+import {MinLength} from './MinLength';
 
 describe('Min', () => {
     class TestClassMinInclusive {
@@ -106,6 +108,20 @@ describe('Min', () => {
     describe('customContext', () => {
         testBuilder('Min', 'value', TestClassWithContext, {min: 5, inclusive: true})
             .buildWithContext('invalid', {should: 'propagate to error'});
+    });
+
+    describe('min default value', () => {
+        class DefaultValue {
+            @MinLength()
+            value?: string = '';
+        }
+
+        it('should be 1', async () => {
+            const actual = await new DecoratorValidator().validate(new DefaultValue());
+
+            expect(actual.propertyErrors.value.validatorFnContext.args.min)
+                .toEqual(1);
+        });
     });
 
 });
