@@ -268,7 +268,7 @@ You will hit a point when the existing constraints/decorators will not suffice.
 
 
 
-## Quick and dirty: CustomConstraint()
+## Quick and dirty: CustomConstraint()<a name="CustomConstraintDetails"></a>
 
 `CustomConstraint()` is a predefined decorator where you just have to fill in the validation function and the message, great for one-off or prototyping purposes.
 
@@ -314,6 +314,24 @@ if (errors) {
     }
 }
 */
+```
+
+
+
+## Reusable: CustomConstraint()
+
+Instead of using [CustomConstraint()](#CustomConstraintDetails) directly in your object, you could wrap it in your own decorator:
+
+```typescript
+export function MyConstraint(someParam: string, opt?: Opts) {
+    return CustomConstraint('MyConstraint', () => validate(someParam), {arg1: 'yeah'});
+}
+
+// then use it as usual: 
+class TestClass {
+    @MyConstraint('Thanks for all the fish!')
+    value?: string;
+}
 ```
 
 
