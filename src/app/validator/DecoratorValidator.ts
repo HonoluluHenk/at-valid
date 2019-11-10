@@ -1,11 +1,6 @@
+import {DEFAULT_GROUP} from '../util/const';
 import {toObject} from '../util/reducers/toObject';
-import {
-    CustomFailure,
-    DEFAULT_GROUP,
-    PropertyValidator,
-    ValidationContext,
-    ValidatorFnContext
-} from './ValidationContext';
+import {CustomFailure, PropertyValidator, ValidationContext, ValidatorFnContext} from './ValidationContext';
 import {ValidationError, ValidationResult} from './ValidationResult';
 
 type ValidationOutcome = boolean | CustomFailure;

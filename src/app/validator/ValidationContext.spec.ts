@@ -1,13 +1,8 @@
 import {CustomConstraint} from '../decorators/constraints/CustomConstraint';
 import {Required} from '../decorators/constraints/Required';
 import {Nested} from '../decorators/Nested';
-import {
-    DEFAULT_GROUP,
-    ExecutionPlan,
-    NestedValidatorConfig,
-    PropertyValidatorConfig,
-    ValidationContext
-} from './ValidationContext';
+import {DEFAULT_GROUP} from '../util/const';
+import {ExecutionPlan, NestedValidatorConfig, PropertyValidatorConfig, ValidationContext} from './ValidationContext';
 
 describe('ValidationContext', () => {
     describe('registerPropertyValidator input validation', () => {
@@ -103,10 +98,10 @@ describe('ValidationContext', () => {
         }
 
         describe('class not registered', () => {
-           it('should fail', () => {
-               expect(() => ValidationContext.instance.buildExecutionPlan({}, []))
-                   .toThrowError('class not registered: Object');
-           }) ;
+            it('should fail', () => {
+                expect(() => ValidationContext.instance.buildExecutionPlan({}, []))
+                    .toThrowError('class not registered: Object');
+            });
         });
 
         describe('nesting is not part of the execution plan', () => {

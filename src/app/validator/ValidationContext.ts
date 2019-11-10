@@ -4,8 +4,7 @@
 import {ValidatorNames} from '../decorators/ValidatorNames';
 import {distinct} from '../util/filters/distinct';
 import {isEmpty} from '../util/isEmpty';
-
-export const DEFAULT_GROUP = 'DEFAULT';
+import {parseGroups} from '../util/parseGroups';
 
 /**
  * Allows for passing data per validator-usage.
@@ -235,10 +234,6 @@ export class ValidationContext {
 
         this.validatorsPerClass.set(validator.target.constructor, allForClass);
     }
-}
-
-function parseGroups(groups?: string | string[]): string[] {
-    return (typeof groups === 'string' ? [groups] : groups) || [DEFAULT_GROUP];
 }
 
 function validatorInGroup(validator: PropertyValidator, group: string): boolean {

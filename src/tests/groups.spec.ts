@@ -1,6 +1,7 @@
 import {ValidatorNames} from '../app/decorators/ValidatorNames';
+import {DEFAULT_GROUP} from '../app/util/const';
 import {DecoratorValidator} from '../app/validator/DecoratorValidator';
-import {DEFAULT_GROUP, Opts, ValidationContext} from '../app/validator/ValidationContext';
+import {Opts, ValidationContext} from '../app/validator/ValidationContext';
 
 describe('groups and ordering', () => {
     function GroupValidator(type: string, opts?: Opts, success: boolean = true): any {
