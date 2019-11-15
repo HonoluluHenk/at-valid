@@ -1,7 +1,7 @@
 import {DEFAULT_GROUP} from './const';
 import {parseGroups} from './parseGroups';
 
-fdescribe('parseGroup', () => {
+describe('parseGroup', () => {
     it(`should parse undefined group`, () => {
         const actual = parseGroups(undefined);
 
