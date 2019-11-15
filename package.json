@@ -39,7 +39,7 @@
 		"bean",
 		"beanvalidation"
 	],
-	"author": "Christoph Linder",
+	"author": "Christoph Linder <at-valid@elainemarley.homeip.net> (https://github.com/HonoluluHenk/at-valid)",
 	"license": "MIT",
 	"devDependencies": {
 		"@types/jasmine": "^3.4.4",
