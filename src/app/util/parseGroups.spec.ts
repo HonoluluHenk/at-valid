@@ -1,4 +1,4 @@
-import {DEFAULT_GROUP} from './const';
+import {DEFAULT_GROUP} from '../decorators';
 import {parseGroups} from './parseGroups';
 
 describe('parseGroup', () => {

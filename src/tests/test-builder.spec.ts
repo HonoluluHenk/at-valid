@@ -1,6 +1,4 @@
-import {DecoratorValidator} from '../app/validator/DecoratorValidator';
-import {CustomContext} from '../app/validator/ValidationContext';
-import {ValidationResult} from '../app/validator/ValidationResult';
+import {CustomContext, DecoratorValidator, ValidationResult} from '../app/validator';
 
 interface TestBuilder<T extends object> {
     readonly validatorName: string;

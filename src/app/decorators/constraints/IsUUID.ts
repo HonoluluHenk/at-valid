@@ -1,7 +1,7 @@
 import * as uuidValidate from 'uuid-validate';
 import {isEmpty} from '../../util/isEmpty';
 import {Opts, ValidationContext} from '../../validator/ValidationContext';
-import {ValidatorNames} from '../ValidatorNames';
+import {ValidatorNames} from '../../validator/ValidatorNames';
 
 /**
  * The value must be valid UUID.

@@ -1,6 +1,6 @@
 import {isEmpty} from '../../util/isEmpty';
 import {Opts, ValidationContext} from '../../validator/ValidationContext';
-import {ValidatorNames} from '../ValidatorNames';
+import {ValidatorNames} from '../../validator/ValidatorNames';
 
 /**
  * The value must be an entry of the given enum (string or indexed).

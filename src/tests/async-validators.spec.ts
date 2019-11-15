@@ -1,5 +1,4 @@
-import {DecoratorValidator} from '../app/validator/DecoratorValidator';
-import {Opts, ValidationContext} from '../app/validator/ValidationContext';
+import {DecoratorValidator, Opts, ValidationContext} from '../app/validator';
 
 const a1 = 'a1';
 const a2 = 'a2';

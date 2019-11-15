@@ -131,7 +131,7 @@ if (result.isError) {
 
 
 Various constraints are found in the [src/decorators/constraints](src/app/decorators/constraints) folder.
-Constraint names (for e.g. building error messages) are defined in [src/decorators/ValidatorNames.ts](src/app/decorators/ValidatorNames.ts).
+Constraint names (for e.g. building error messages) are defined in [src/decorators/ValidatorNames.ts](src/app/validator/ValidatorNames.ts).
 
 To see how you might implement your own decorators, see [Advanced Usage](#advanced-usage).
 
@@ -377,7 +377,7 @@ class FavoriteMovieCharacter {
 }
 ```
 
-For an up-to-date list of predefined validators, see [ValidatorNames.ts](src/app/decorators/ValidatorNames.ts).
+For an up-to-date list of predefined validators, see [ValidatorNames.ts](src/app/validator/ValidatorNames.ts).
 
 
 

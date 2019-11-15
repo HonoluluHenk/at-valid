@@ -1,13 +1,20 @@
-import {DEFAULT_GROUP} from '../util/const';
+import {DEFAULT_GROUP} from '../decorators';
 import {toObject} from '../util/reducers/toObject';
-import {CustomFailure, PropertyValidator, ValidationContext, ValidatorFnContext} from './ValidationContext';
+import {
+    CustomFailure,
+    PropertyValidator,
+    ValidationContext,
+    ValidationOutcome,
+    ValidatorFnContext
+} from './ValidationContext';
 import {ValidationError, ValidationResult} from './ValidationResult';
-
-type ValidationOutcome = boolean | CustomFailure;
 
 export interface ValidateParams {
     groups?: string[];
 }
+
+export const PROPERTY_ROOT_PATH = '$';
+export const PATH_SEPARATOR = '.';
 
 export class DecoratorValidator {
 
@@ -24,7 +31,7 @@ export class DecoratorValidator {
     async validate(targetInstance: object, params?: ValidateParams): Promise<ValidationResult> {
         const validParams = parseParams(params);
 
-        return validateImpl(targetInstance, validParams, '$');
+        return validateImpl(targetInstance, validParams, PROPERTY_ROOT_PATH);
     }
 }
 
@@ -40,7 +47,7 @@ async function validateImpl(
         const validatorPromises: Array<Promise<ValidationError | undefined>> = Object.keys(groupPlan.propertyValidators)
             .map(
                 propertyKey => runValidators(
-                    groupPlan.targetInstance,
+                    targetInstance,
                     groupPlan.propertyValidators[propertyKey],
                     instancePath,
                     (nestedTargetIntance, nestedPath) => validateImpl(nestedTargetIntance, params, nestedPath)
@@ -62,10 +69,10 @@ async function validateImpl(
 }
 
 function appendPath(parentPath: string, childPath: string) {
-    return [parentPath, childPath].join('.');
+    return [parentPath, childPath].join(PATH_SEPARATOR);
 }
 
-function mapToValidationError(
+export function mapToValidationError(
     outcome: ValidationOutcome,
     value: any,
     validator: PropertyValidator,

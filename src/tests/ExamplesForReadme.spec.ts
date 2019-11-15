@@ -1,12 +1,6 @@
-import {CustomConstraint} from '../app/decorators/constraints/CustomConstraint';
-import {IsNumber} from '../app/decorators/constraints/IsNumber';
-import {Matches} from '../app/decorators/constraints/Matches';
-import {Min} from '../app/decorators/constraints/Min';
-import {MinLength} from '../app/decorators/constraints/MinLength';
-import {Required} from '../app/decorators/constraints/Required';
+import {CustomConstraint, IsNumber, Matches, Min, MinLength, Required} from '../app/decorators';
 import {isEmpty} from '../app/util/isEmpty';
-import {DecoratorValidator, ValidateParams} from '../app/validator/DecoratorValidator';
-import {CustomFailure, Opts, ValidationContext} from '../app/validator/ValidationContext';
+import {CustomFailure, DecoratorValidator, Opts, ValidateParams, ValidationContext} from '../app/validator';
 
 /* tslint:disable:member-access */
 describe('ExamplesForReadme', () => {

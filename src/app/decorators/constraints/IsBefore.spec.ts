@@ -1,7 +1,8 @@
 import {testBuilder} from '../../../tests/test-builder.spec';
+import {DateProvider} from '../../util/DateProvider';
 import {DecoratorValidator} from '../../validator/DecoratorValidator';
 import {ValidationResult} from '../../validator/ValidationResult';
-import {DateProvider, IsBefore} from './IsBefore';
+import {IsBefore} from './IsBefore';
 import Spy = jasmine.Spy;
 
 describe('IsBefore', () => {

@@ -1,7 +1,5 @@
-import {CustomConstraint} from '../decorators/constraints/CustomConstraint';
-import {Required} from '../decorators/constraints/Required';
-import {Nested} from '../decorators/Nested';
-import {DEFAULT_GROUP} from '../util/const';
+import {DEFAULT_GROUP} from '../decorators';
+import {CustomConstraint, Nested, Required} from '../decorators';
 import {ExecutionPlan, NestedValidatorConfig, PropertyValidatorConfig, ValidationContext} from './ValidationContext';
 
 describe('ValidationContext', () => {
@@ -121,7 +119,7 @@ describe('ValidationContext', () => {
                         .toEqual({
                             groups: {
                                 DEFAULT: {
-                                    targetInstance,
+                                    targetClass: Outer,
                                     propertyValidators: {
                                         bar: [{
                                             name: 'Nested',
@@ -150,7 +148,7 @@ describe('ValidationContext', () => {
                     .toEqual({
                         groups: {
                             DEFAULT: {
-                                targetInstance,
+                                targetClass: Inner,
                                 propertyValidators: {
                                     banana: [{
                                         name: 'Required',
@@ -180,16 +178,17 @@ describe('ValidationContext', () => {
                 const actual = ValidationContext.instance
                     .buildExecutionPlan(fixture, ['FIRST']);
 
-                expect(JSON.parse(JSON.stringify(actual)))
+                expect(actual)
                     .toEqual({
                             groups: {
                                 FIRST: {
-                                    targetInstance: {},
+                                    targetClass: GroupTesting,
                                     propertyValidators: {
                                         value: [{
                                             name: 'first',
                                             propertyKey: 'value',
                                             target: {},
+                                            validatorFn: jasmine.any(Function) as any,
                                             validatorFnContext: {args: {}, customContext: {}},
                                             groups: ['FIRST']
                                         }]
@@ -205,17 +204,18 @@ describe('ValidationContext', () => {
                 const actual = ValidationContext.instance
                     .buildExecutionPlan(fixture, ['SECOND']);
 
-                expect(JSON.parse(JSON.stringify(actual)))
+                expect(actual)
                     .toEqual({
                             groups: {
                                 SECOND: {
-                                    targetInstance: {},
+                                    targetClass: GroupTesting,
                                     propertyValidators: {
                                         value: [
                                             {
                                                 name: 'second',
                                                 propertyKey: 'value',
                                                 target: {},
+                                                validatorFn: jasmine.any(Function) as any,
                                                 validatorFnContext: {args: {}, customContext: {}},
                                                 groups: ['SECOND']
                                             },
@@ -223,6 +223,7 @@ describe('ValidationContext', () => {
                                                 name: 'third',
                                                 propertyKey: 'value',
                                                 target: {},
+                                                validatorFn: jasmine.any(Function) as any,
                                                 validatorFnContext: {args: {}, customContext: {}},
                                                 groups: ['SECOND', 'THIRD']
                                             },
@@ -239,28 +240,30 @@ describe('ValidationContext', () => {
                 const actual = ValidationContext.instance
                     .buildExecutionPlan(fixture, ['THIRD', 'FIRST']);
 
-                expect(JSON.parse(JSON.stringify(actual)))
+                expect(actual)
                     .toEqual({
                             groups: {
                                 THIRD: {
-                                    targetInstance: {},
+                                    targetClass: GroupTesting,
                                     propertyValidators: {
                                         value: [{
                                             name: 'third',
                                             propertyKey: 'value',
                                             target: {},
+                                            validatorFn: jasmine.any(Function) as any,
                                             validatorFnContext: {args: {}, customContext: {}},
                                             groups: ['SECOND', 'THIRD']
                                         }]
                                     }
                                 },
                                 FIRST: {
-                                    targetInstance: {},
+                                    targetClass: GroupTesting,
                                     propertyValidators: {
                                         value: [{
                                             name: 'first',
                                             propertyKey: 'value',
                                             target: {},
+                                            validatorFn: jasmine.any(Function) as any,
                                             validatorFnContext: {args: {}, customContext: {}},
                                             groups: ['FIRST']
                                         }]

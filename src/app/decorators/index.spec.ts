@@ -1,4 +1,4 @@
-import {DEFAULT_GROUP} from './const';
+import {DEFAULT_GROUP} from '.';
 
 describe('const', () => {
     it(`should prevent typos`, () => {

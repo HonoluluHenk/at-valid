@@ -1,8 +1,7 @@
+import {DateProvider} from '../../util/DateProvider';
 import {isEmpty} from '../../util/isEmpty';
 import {CustomFailure, Opts, ValidationContext} from '../../validator/ValidationContext';
-import {ValidatorNames} from '../ValidatorNames';
-
-export type DateProvider<T extends object> = (instante: T) => Date;
+import {ValidatorNames} from '../../validator/ValidatorNames';
 
 /**
  * The {@link Date} value must be before some instant.

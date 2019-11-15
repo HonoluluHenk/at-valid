@@ -1,5 +1,5 @@
 import {Opts, ValidationContext} from '../validator/ValidationContext';
-import {ValidatorNames} from './ValidatorNames';
+import {ValidatorNames} from '../validator/ValidatorNames';
 
 export function Nested(
     opts?: Opts

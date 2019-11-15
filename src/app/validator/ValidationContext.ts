@@ -1,10 +1,10 @@
 /**
  * The default validation group.
  */
-import {ValidatorNames} from '../decorators/ValidatorNames';
 import {distinct} from '../util/filters/distinct';
 import {isEmpty} from '../util/isEmpty';
 import {parseGroups} from '../util/parseGroups';
+import {ValidatorNames} from './ValidatorNames';
 
 /**
  * Allows for passing data per validator-usage.
@@ -19,9 +19,11 @@ export interface CustomFailure {
     messageArgs?: object;
 }
 
+export type ValidationOutcome = boolean | CustomFailure;
+
 export type ValidatorFn<V, T extends object = object> =
     (value: V | undefined | null, ctx: ValidatorFnContext, targetInstance: T)
-        => boolean | CustomFailure | PromiseLike<boolean | CustomFailure>;
+        => ValidationOutcome | Promise<ValidationOutcome>;
 
 export type ValidatorFnLike<V, T extends object = object> = ValidatorFn<V, T> | 'NESTED';
 
@@ -30,7 +32,7 @@ interface RuntimeValidatorConfigMap {
 }
 
 export interface ValidatorFnContext {
-    readonly args: {[name: string]: any};
+    readonly args: { [name: string]: any };
     readonly customContext: CustomContext;
 }
 
@@ -98,9 +100,10 @@ export interface NestedValidatorConfig {
 }
 
 export interface GroupPlan {
-    targetInstance: object;
+    // tslint:disable-next-line:ban-types
+    targetClass: Function;
     propertyValidators: {
-        [property: string]: PropertyValidator[],
+        [propertyKey: string]: PropertyValidator[],
     };
     //TODO:
     // classValidator?: ClassValidator
@@ -128,7 +131,8 @@ export class ValidationContext {
      *     <li>"constructor" (for class validators)</li>
      * </ul>
      */
-    private readonly validatorsPerClass: Map<object, RuntimeValidatorConfigMap> = new Map();
+        // tslint:disable-next-line:ban-types
+    private readonly validatorsPerClass: Map<Function | string, RuntimeValidatorConfigMap> = new Map();
 
     registerPropertyValidator<V>(
         config: PropertyValidatorConfig<V>
@@ -182,7 +186,8 @@ export class ValidationContext {
 
     }
 
-    buildExecutionPlan(targetInstance: object, groups: string[]): ExecutionPlan {
+    // tslint:disable-next-line:ban-types
+    buildExecutionPlan(targetInstanceOrClass: object | Function, groups: string[]): ExecutionPlan {
 
         const result: ExecutionPlan = {
             groups: {}
@@ -190,14 +195,19 @@ export class ValidationContext {
 
         const executed: { [property: string]: PropertyValidator[] } = {};
 
-        const validatorsByProperty = this.getValidatorsForClass(targetInstance);
+        // tslint:disable-next-line:ban-types
+        const ctor: Function = (targetInstanceOrClass instanceof Function)
+            ? targetInstanceOrClass
+            : targetInstanceOrClass.constructor;
+
+        const validatorsByProperty = this.getValidatorsForClass(ctor);
         if (isEmpty(validatorsByProperty)) {
-            throw new Error(`class not registered: ${targetInstance.constructor.name}`);
+            throw new Error(`class not registered: ${targetInstanceOrClass.constructor.name}`);
         }
 
         for (const group of groups) {
             const groupPlan: GroupPlan = {
-                targetInstance,
+                targetClass: ctor,
                 propertyValidators: {}
             };
 
@@ -221,8 +231,9 @@ export class ValidationContext {
         return result;
     }
 
-    private getValidatorsForClass(object: object): RuntimeValidatorConfigMap | undefined {
-        return this.validatorsPerClass.get(object.constructor);
+    // tslint:disable-next-line:ban-types
+    private getValidatorsForClass(clazz: Function | string): RuntimeValidatorConfigMap | undefined {
+        return this.validatorsPerClass.get(clazz);
     }
 
     private putValidator(validator: PropertyValidator): void {

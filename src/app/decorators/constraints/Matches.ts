@@ -1,6 +1,6 @@
 import {isEmpty} from '../../util/isEmpty';
 import {Opts, ValidationContext} from '../../validator/ValidationContext';
-import {ValidatorNames} from '../ValidatorNames';
+import {ValidatorNames} from '../../validator/ValidatorNames';
 
 /**
  * The string-value must match the given {@link RegExp} pattern, see {@link String#match}.
