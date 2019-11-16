@@ -1,62 +1,66 @@
 {
-	"name": "at-valid",
-	"version": "2.0.0-0",
-	"description": "Validate objects by assigning decorators/annotations to properties.",
-	"main": "lib/index.js",
-	"types": "lib/index.d.ts",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/HonoluluHenk/at-valid.git"
-	},
-	"scripts": {
-		"format": "echo FIXME",
-		"lint": "npm run lint:tsc:app && npm run lint:tsc:spec",
-		"lint:fix": "npm run lint:tsc:app:fix && npm run lint:tsc:spec:fix",
-		"lint:tsc:app": "tslint -p tsconfig.app.json",
-		"lint:tsc:app:fix": "tslint -p tsconfig.app.json --fix",
-		"lint:tsc:spec": "tslint -p tsconfig.spec.json",
-		"lint:tsc:spec:fix": "tslint -p tsconfig.spec.json --fix",
-		"test:watch": "nodemon --watch src --ext ts --exec 'jasmine-ts --config=jasmine.json'",
-		"test": "nyc  -r lcov -e .ts -x '**/*.spec.ts' jasmine-ts --config=jasmine.json",
-		"clean": "rimraf lib coverage .nyc_output",
-        "build": "check-engine package.json && npm run clean && tsc -p tsconfig.app.json",
-        "prepublishOnly": "npm run lint && npm run test && npm build"
+    "name": "at-valid",
+    "version": "2.0.0-0",
+    "description": "Validate objects by assigning decorators/annotations to properties.",
+    "homepage": "https://github.com/HonoluluHenk/at-valid",
+    "bugs": {
+        "url": "https://github.com/HonoluluHenk/at-valid/issues"
     },
-	"engines": {
-		"node": ">=12.13.0",
-		"npm": ">=6.12.0"
-	},
-	"files": [
-		"lib/**/*"
-	],
-	"keywords": [
-		"object",
-		"class",
-		"validation",
-		"validate",
-		"annotations",
-		"bean",
-		"beanvalidation"
-	],
-	"author": "Christoph Linder <at-valid@elainemarley.homeip.net> (https://github.com/HonoluluHenk/at-valid)",
-	"license": "MIT",
-	"devDependencies": {
-		"@types/jasmine": "^3.4.4",
-		"@types/uuid-validate": "0.0.1",
-		"check-engine": "^1.8.1",
-		"istanbul": "^0.4.5",
-		"jasmine": "^3.5.0",
-		"jasmine-spec-reporter": "^4.2.1",
-		"jasmine-ts": "^0.3.0",
-		"nodemon": "^1.19.4",
-		"nyc": "^14.1.1",
-		"reflect-metadata": "^0.1.13",
-		"rimraf": "^3.0.0",
-		"ts-node": "^8.4.1",
-		"tslint": "^5.20.0",
-		"typescript": "^3.6.4"
-	},
-	"dependencies": {
-		"uuid-validate": "0.0.3"
-	}
+    "main": "lib/index.js",
+    "types": "lib/index.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/HonoluluHenk/at-valid.git"
+    },
+    "scripts": {
+        "format": "echo FIXME",
+        "lint": "npm run lint:tsc:app && npm run lint:tsc:spec",
+        "lint:fix": "npm run lint:tsc:app:fix && npm run lint:tsc:spec:fix",
+        "lint:tsc:app": "tslint -p tsconfig.app.json",
+        "lint:tsc:app:fix": "tslint -p tsconfig.app.json --fix",
+        "lint:tsc:spec": "tslint -p tsconfig.spec.json",
+        "lint:tsc:spec:fix": "tslint -p tsconfig.spec.json --fix",
+        "test:watch": "nodemon --watch src --ext ts --exec 'ts-node --project tsconfig.spec.json node_modules/jasmine/bin/jasmine --config=jasmine.json'",
+        "test": "nyc  -r lcov -e .ts -x '**/*.spec.ts' ts-node --project tsconfig.spec.json node_modules/jasmine/bin/jasmine --config=jasmine.json",
+        "verify": "npm run lint && npm run test",
+        "clean": "rimraf lib coverage .nyc_output",
+        "build": "check-engine package.json && npm run clean && tsc -p tsconfig.app.json",
+        "prepublishOnly": "npm run verify && npm build"
+    },
+    "engines": {
+        "node": ">=12.13.0",
+        "npm": ">=6.12.0"
+    },
+    "files": [
+        "lib/**/*"
+    ],
+    "keywords": [
+        "object",
+        "class",
+        "validation",
+        "validate",
+        "annotations",
+        "bean",
+        "beanvalidation"
+    ],
+    "author": "Christoph Linder <at-valid@elainemarley.homeip.net> (https://github.com/HonoluluHenk)",
+    "license": "MIT",
+    "devDependencies": {
+        "@types/jasmine": "^3.4.4",
+        "@types/uuid-validate": "0.0.1",
+        "check-engine": "^1.8.1",
+        "istanbul": "^0.4.5",
+        "jasmine": "^3.5.0",
+        "jasmine-spec-reporter": "^4.2.1",
+        "nodemon": "^1.19.4",
+        "nyc": "^14.1.1",
+        "reflect-metadata": "^0.1.13",
+        "rimraf": "^3.0.0",
+        "ts-node": "^8.4.1",
+        "tslint": "^5.20.0",
+        "typescript": "^3.6.4"
+    },
+    "dependencies": {
+        "uuid-validate": "0.0.3"
+    }
 }

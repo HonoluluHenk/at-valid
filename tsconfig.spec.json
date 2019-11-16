@@ -1,14 +1,11 @@
 {
-	"extends": "./tsconfig.json",
-	"types": [
-		"jasmine",
-		"node"
-	],
-	"files": [
-        "src/tests/test.ts"
-	],
-	"include": [
-		"src/**/*.spec.ts",
-		"src/**/*.d.ts"
-	]
+    "extends": "./tsconfig.json",
+    "types": [
+        "jasmine",
+        "node"
+    ],
+    "include": [
+        "src/**/*.spec.ts",
+        "src/**/*.d.ts"
+    ]
 }
