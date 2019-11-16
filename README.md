@@ -12,7 +12,6 @@ Imagine you could just use decorators directly on the properties or the whole cl
 Validation becomes as easy as:
 
 ```typescript
-@NameDoesNotExistInDB(groups: ['PRE_INSERT']) // async validation
 class MyClass {
     @Required()
     @MinLength(3)
