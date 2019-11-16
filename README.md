@@ -24,10 +24,7 @@ if (validationError) {
 }
 ```
 
-
-
-TODO: link to the Angular FormBuilder adapter.
-
+There's also a nice integration into angular validation: [ng-at-valid](https://github.com/HonoluluHenk/ng-at-valid)
 
 
 ## Installing / Getting started
